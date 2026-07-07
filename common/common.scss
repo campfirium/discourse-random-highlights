@@ -6,6 +6,13 @@
 
 .random-highlight--custom {
   background: var(--random-highlight-bg);
+}
+
+.random-highlight--custom > td {
+  background: var(--random-highlight-bg);
+}
+
+.random-highlight--custom > td:first-child {
   box-shadow: inset 3px 0 0 var(--random-highlight-border);
 }
 
