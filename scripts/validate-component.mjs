@@ -309,6 +309,14 @@ if (readme.includes("same items immediately")) {
 if (!security.includes("not treated as security boundaries")) {
   fail("SECURITY.md: missing client-side filtering boundary statement");
 }
+for (const requiredReadmeSecurityText of [
+  "rendered as escaped text",
+  "does not render source post HTML"
+]) {
+  if (!readme.includes(requiredReadmeSecurityText)) {
+    fail(`README.md: missing source HTML rendering boundary: ${requiredReadmeSecurityText}`);
+  }
+}
 for (const requiredContributingText of [
   "node scripts/validate-component.mjs",
   "CHANGELOG.md",
@@ -473,6 +481,12 @@ if (!gjs.includes("Array.isArray(cache.topics)")) {
 }
 if (!gjs.includes("Array.isArray(storedQueue)")) {
   fail("GJS: session display queue should be ignored unless it is an array");
+}
+if (!gjs.includes("node.textContent ||")) {
+  fail("GJS: marked excerpts should be extracted as textContent");
+}
+if (gjs.includes("htmlSafe") || gjs.includes("{{{")) {
+  fail("GJS: source post HTML must not be rendered into the topic list row");
 }
 
 for (const file of files) {

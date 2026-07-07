@@ -35,5 +35,6 @@
 - Document the unreleased validation status in the README.
 - Validate the expected public tracked file list.
 - Add issue template configuration for structured support reports.
+- Document and validate escaped-text rendering for source excerpts.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.

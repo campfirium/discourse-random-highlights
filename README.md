@@ -46,6 +46,8 @@ Discourse installs and updates theme components from the Git repository. After c
 
 The component reads source data from Discourse JSON endpoints that the current visitor can already access. It does not add server-side permissions, expose private topics, migrate old content, or write database records.
 
+Marked excerpts are rendered as escaped text. The component parses cooked post HTML only to find matching highlight elements and extract their text; it does not render source post HTML inside the topic list row.
+
 The author and composer allowlist settings are client-side filtering for presentation and workflow control. They are not a security boundary.
 
 The browser keeps only short-lived display state in memory and `sessionStorage` so the random queue can rotate through source topics without immediately repeating the same topic.
