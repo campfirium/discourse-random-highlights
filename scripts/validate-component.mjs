@@ -6,6 +6,16 @@ import { execFileSync } from "node:child_process";
 
 const root = process.cwd();
 const failures = [];
+const SUPPORTED_THEME_SETTING_TYPES = new Set([
+  "integer",
+  "float",
+  "string",
+  "bool",
+  "list",
+  "enum",
+  "upload",
+  "objects"
+]);
 
 function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), "utf8");
@@ -59,6 +69,9 @@ function parseSettingsYaml(relativePath) {
   for (const [key, setting] of settings) {
     if (!setting.fields.has("default")) fail(`${relativePath}: ${key} missing default`);
     if (!setting.fields.has("description")) fail(`${relativePath}: ${key} missing description`);
+    if (setting.fields.has("type") && !SUPPORTED_THEME_SETTING_TYPES.has(setting.fields.get("type"))) {
+      fail(`${relativePath}: ${key} uses unsupported theme setting type ${setting.fields.get("type")}`);
+    }
     if (setting.fields.get("type") === "enum" && !setting.choices.length) {
       fail(`${relativePath}: ${key} enum setting missing choices`);
     }
