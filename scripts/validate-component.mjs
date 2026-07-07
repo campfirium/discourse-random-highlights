@@ -123,6 +123,12 @@ function trackedFiles() {
     .filter(Boolean);
 }
 
+function gitTags(pattern) {
+  return execFileSync("git", ["tag", "--list", pattern], { encoding: "utf8" })
+    .split(/\r?\n/)
+    .filter(Boolean);
+}
+
 function trackedText(files) {
   return files
     .filter((file) => /\.(md|json|ya?ml|scss|html|gjs|js|mjs|txt)$/.test(file))
@@ -151,6 +157,12 @@ if (about?.component !== true) fail('about.json: expected "component": true');
 if (!about?.theme_version) fail("about.json: missing theme_version");
 if (about?.theme_version && !changelog.includes(`## ${about.theme_version}`)) {
   fail(`CHANGELOG.md: missing section for theme_version ${about.theme_version}`);
+}
+if (about?.theme_version && changelog.includes(`## ${about.theme_version} - Unreleased`)) {
+  const releaseTag = `v${about.theme_version}`;
+  if (gitTags(releaseTag).includes(releaseTag)) {
+    fail(`git tag ${releaseTag}: remove this tag until runtime release validation passes`);
+  }
 }
 if (about?.about_url && !readme.includes(about.about_url)) {
   fail(`README.md: missing about_url ${about.about_url}`);
