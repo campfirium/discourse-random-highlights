@@ -232,7 +232,7 @@ export default class RandomHighlights extends Component {
 
   getCachedTopics() {
     const cache = window._randomHighlightsTopicCache;
-    if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !cache.topics) return null;
+    if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !Array.isArray(cache.topics)) return null;
     if (Date.now() - cache.fetchedAt > CACHE_MS) return null;
     return cache.topics;
   }
@@ -318,7 +318,10 @@ export default class RandomHighlights extends Component {
 
   async fetchNextHighlight() {
     const topics = await this.fetchTaggedTopics();
-    let queue = (readJSON(QUEUE_KEY) || []).filter((key) => topics.some((topic) => randomKey(topic) === key));
+    const storedQueue = readJSON(QUEUE_KEY);
+    let queue = (Array.isArray(storedQueue) ? storedQueue : []).filter((key) =>
+      topics.some((topic) => randomKey(topic) === key)
+    );
     if (!queue.length) queue = shuffle(topics.map((topic) => randomKey(topic)).filter(Boolean));
 
     while (queue.length) {

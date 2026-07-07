@@ -291,6 +291,12 @@ if (!gjs.includes("AUTHOR_MIN_TRUST_LEVEL")) {
 if (!gjs.includes('String(settings.short_topic_tag || "").trim()')) {
   fail("GJS: source tags should be trimmed before cache/signature use");
 }
+if (!gjs.includes("Array.isArray(cache.topics)")) {
+  fail("GJS: cached topics should be ignored unless they are an array");
+}
+if (!gjs.includes("Array.isArray(storedQueue)")) {
+  fail("GJS: session display queue should be ignored unless it is an array");
+}
 
 for (const file of files) {
   if (file.startsWith(".lab/") || file.startsWith(".agents/") || file.startsWith(".tmp/")) {
