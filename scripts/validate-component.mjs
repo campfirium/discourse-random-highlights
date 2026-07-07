@@ -123,6 +123,12 @@ function trackedFiles() {
     .filter(Boolean);
 }
 
+function trackedEolRows() {
+  return execFileSync("git", ["ls-files", "--eol"], { encoding: "utf8" })
+    .split(/\r?\n/)
+    .filter(Boolean);
+}
+
 function gitTags(pattern) {
   return execFileSync("git", ["tag", "--list", pattern], { encoding: "utf8" })
     .split(/\r?\n/)
@@ -137,7 +143,9 @@ function trackedText(files) {
 }
 
 const files = trackedFiles();
+const eolRows = trackedEolRows();
 const about = parseJson("about.json");
+const gitattributes = read(".gitattributes");
 const readme = read("README.md");
 const changelog = read("CHANGELOG.md");
 const security = read("SECURITY.md");
@@ -166,6 +174,16 @@ if (about?.theme_version && changelog.includes(`## ${about.theme_version} - Unre
 }
 if (about?.about_url && !readme.includes(about.about_url)) {
   fail(`README.md: missing about_url ${about.about_url}`);
+}
+
+if (!gitattributes.includes("eol=lf")) fail(".gitattributes: missing LF line-ending rule");
+for (const row of eolRows) {
+  const pathMatch = /\t(.+)$/.exec(row);
+  const worktreeMatch = /\bw\/(\S+)/.exec(row);
+  if (!pathMatch || !worktreeMatch) continue;
+  if (worktreeMatch[1] !== "lf") {
+    fail(`${pathMatch[1]}: expected LF worktree line endings, found ${worktreeMatch[1]}`);
+  }
 }
 
 if (!files.includes("SECURITY.md")) fail("SECURITY.md: missing from tracked files");
