@@ -20,6 +20,7 @@ const SUPPORTED_THEME_SETTING_TYPES = new Set([
 const EXPECTED_REPOSITORY_URL = "https://github.com/campfirium/discourse-random-highlights";
 const EXPECTED_LICENSE_URL = `${EXPECTED_REPOSITORY_URL}/blob/main/LICENSE`;
 const EXPECTED_ISSUES_URL = `${EXPECTED_REPOSITORY_URL}/issues`;
+const SITE_SPECIFIC_TAG_NAMES = ["twig", "twigs"];
 
 function read(relativePath) {
   if (readCache.has(relativePath)) return readCache.get(relativePath);
@@ -183,6 +184,7 @@ const headTag = read("common/head_tag.html");
 const scss = read("common/common.scss");
 const componentText = [gjs, headTag, scss].join("\n");
 const publicText = trackedText(files);
+const publicDistributionText = trackedText(files.filter((file) => file !== "scripts/validate-component.mjs"));
 
 if (about?.component !== true) fail('about.json: expected "component": true');
 if (normalizeRepositoryUrl(originUrl) !== EXPECTED_REPOSITORY_URL) {
@@ -319,6 +321,16 @@ for (const requiredReleaseGate of [
 if (settings.size !== 18) {
   fail(`settings.yml: expected 18 public settings, found ${settings.size}`);
 }
+for (const sourceTagSetting of ["short_topic_tag", "excerpt_topic_tag"]) {
+  if (settings.get(sourceTagSetting)?.fields.get("default") !== '""') {
+    fail(`settings.yml: ${sourceTagSetting} default must stay empty for public distribution`);
+  }
+}
+for (const tagName of SITE_SPECIFIC_TAG_NAMES) {
+  if (new RegExp(`\\b${tagName}\\b`, "i").test(publicDistributionText)) {
+    fail(`Public files: remove site-specific tag name "${tagName}"`);
+  }
+}
 
 for (const setting of settingNames) {
   if (!readme.includes(`\`${setting}\``)) {
@@ -421,6 +433,15 @@ if (!gjs.includes("Array.isArray(storedQueue)")) {
 for (const file of files) {
   if (file.startsWith(".lab/") || file.startsWith(".agents/") || file.startsWith(".tmp/")) {
     fail(`Tracked local-only file: ${file}`);
+  }
+  if (/(^|\/)\.env(\.|$)/.test(file) || /(^|\/)env\.local$/.test(file)) {
+    fail(`Tracked environment file: ${file}`);
+  }
+  if (/\.(log|pem|key|p12|pfx)$/i.test(file)) {
+    fail(`Tracked sensitive or local artifact file: ${file}`);
+  }
+  if (/(^|\/)(migration|backup|repair|audit)[^/]*\.(mjs|js|json|md)$/i.test(file)) {
+    fail(`Tracked local maintenance artifact: ${file}`);
   }
 }
 
