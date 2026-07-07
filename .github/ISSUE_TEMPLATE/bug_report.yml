@@ -1,0 +1,78 @@
+name: Bug report
+description: Report a problem with the Random Highlights Discourse theme component.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Please include enough runtime detail to reproduce it on a Discourse test site.
+  - type: input
+    id: discourse-version
+    attributes:
+      label: Discourse version
+      description: Include the version or commit shown in your Discourse admin panel, if available.
+      placeholder: "Example: 3.x.x or commit SHA"
+    validations:
+      required: true
+  - type: input
+    id: component-commit
+    attributes:
+      label: Component commit
+      description: The installed commit SHA from this repository, if visible in the theme component admin page.
+      placeholder: "Example: 4112f74"
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Install or update from Git
+        - Topic list rendering
+        - Source tag or excerpt selection
+        - Composer toolbar button
+        - Author or user filtering
+        - Styling or dark mode
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Relevant component settings
+      description: Include tag settings, selector, filters, style mode, and author mode.
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include browser console errors and network request failures if any.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: List the smallest sequence that reproduces the problem.
+      placeholder: |
+        1. Install component from Git
+        2. Configure ...
+        3. Open ...
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or recordings
+      description: Drag screenshots or recordings here if the issue is visual.
+    validations:
+      required: false

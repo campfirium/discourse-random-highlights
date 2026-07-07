@@ -26,6 +26,10 @@ This component targets modern Discourse theme components using Glimmer `.gjs` co
 
 Discourse installs and updates theme components from the Git repository. After changing settings or updating the component, refresh the affected theme and verify the topic list and composer behavior on the target site.
 
+## Support
+
+Report issues at `https://github.com/campfirium/discourse-random-highlights/issues`. Include your Discourse version, installed component commit, relevant component settings, browser console errors, and screenshots for rendering or styling problems.
+
 ## Maintenance
 
 This repository includes a lightweight validation script:
