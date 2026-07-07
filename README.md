@@ -12,7 +12,7 @@ Clicking a highlight opens the source topic. On desktop, the component reuses to
 ## Installation
 
 1. Open Discourse admin: `/admin/customize/themes`.
-2. Install a theme component from this repository URL.
+2. Install a theme component from this repository URL: `https://github.com/campfirium/discourse-random-highlights`.
 3. Add the component to your active theme.
 4. Configure `short_topic_tag` and/or `excerpt_topic_tag` in the component settings.
 
