@@ -168,10 +168,16 @@ if (!about?.theme_version) fail("about.json: missing theme_version");
 if (about?.theme_version && !changelog.includes(`## ${about.theme_version}`)) {
   fail(`CHANGELOG.md: missing section for theme_version ${about.theme_version}`);
 }
-if (about?.theme_version && changelog.includes(`## ${about.theme_version} - Unreleased`)) {
+const versionIsUnreleased = about?.theme_version && changelog.includes(`## ${about.theme_version} - Unreleased`);
+if (versionIsUnreleased) {
   const releaseTag = `v${about.theme_version}`;
   if (gitTags(releaseTag).includes(releaseTag)) {
     fail(`git tag ${releaseTag}: remove this tag until runtime release validation passes`);
+  }
+  for (const blockedMetadata of ["minimum_discourse_version", "maximum_discourse_version", "screenshots"]) {
+    if (Object.hasOwn(about, blockedMetadata)) {
+      fail(`about.json: ${blockedMetadata} must wait for runtime release validation`);
+    }
   }
 }
 if (about?.about_url && !readme.includes(about.about_url)) {
