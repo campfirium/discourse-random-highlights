@@ -232,24 +232,30 @@ export default class RandomHighlights extends Component {
     const topics = [];
 
     for (const config of configs) {
-      const response = await fetch("/tag/" + encodeURIComponent(config.tag) + ".json", { credentials: "same-origin" });
-      if (!response.ok) continue;
+      try {
+        const response = await fetch("/tag/" + encodeURIComponent(config.tag) + ".json", { credentials: "same-origin" });
+        if (!response.ok) continue;
 
-      const payload = await response.json();
-      const usersById = {};
-      (payload.users || []).forEach((user) => {
-        usersById[user.id] = user;
-      });
-
-      ((payload.topic_list && payload.topic_list.topics) || [])
-        .filter((topic) => topic && topic.id && !topic.deleted && !topic.archived)
-        .forEach((topic) => {
-          topics.push(Object.assign({}, topic, {
-            _randomHighlightsUsersById: usersById,
-            _randomHighlightsMode: config.mode,
-            _randomHighlightsKey: config.mode + ":" + topic.id
-          }));
+        const payload = await response.json();
+        const usersById = {};
+        (payload.users || []).forEach((user) => {
+          usersById[user.id] = user;
         });
+
+        ((payload.topic_list && payload.topic_list.topics) || [])
+          .filter((topic) => topic && topic.id && !topic.deleted && !topic.archived)
+          .forEach((topic) => {
+            topics.push(Object.assign({}, topic, {
+              _randomHighlightsUsersById: usersById,
+              _randomHighlightsMode: config.mode,
+              _randomHighlightsKey: config.mode + ":" + topic.id
+            }));
+          });
+      } catch (error) {
+        // One unavailable tag source should not block the other configured source.
+        // eslint-disable-next-line no-console
+        console.warn("random highlights tag failed", error);
+      }
     }
 
     this.setCachedTopics(topics);
