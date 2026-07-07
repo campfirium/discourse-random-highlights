@@ -26,6 +26,16 @@ This component targets modern Discourse theme components using Glimmer `.gjs` co
 
 Discourse installs and updates theme components from the Git repository. After changing settings or updating the component, refresh the affected theme and verify the topic list and composer behavior on the target site.
 
+## Maintenance
+
+This repository includes a lightweight validation script:
+
+```bash
+node scripts/validate-component.mjs
+```
+
+It checks component metadata, setting references, README coverage, locale keys, and a few compatibility guardrails. It does not build the theme or replace real Discourse install/update validation.
+
 ## Settings
 
 - `short_topic_tag`: tag used for short topics. The first post is used as one random item. Leave empty to disable this source mode.
