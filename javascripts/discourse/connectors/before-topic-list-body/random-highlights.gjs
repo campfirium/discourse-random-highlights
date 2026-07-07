@@ -101,13 +101,11 @@ function authorUser(topic, post) {
 function rememberPostUser(topic, post) {
   if (!topic || !post || !post.user_id) return;
   topic._randomHighlightsUsersById = topic._randomHighlightsUsersById || {};
-  topic._randomHighlightsUsersById[post.user_id] = Object.assign({}, topic._randomHighlightsUsersById[post.user_id], {
-    id: post.user_id,
-    username: post.username,
-    name: post.name,
-    avatar_template: post.avatar_template,
-    trust_level: post.trust_level
+  const user = Object.assign({}, topic._randomHighlightsUsersById[post.user_id], { id: post.user_id });
+  ["username", "name", "avatar_template", "trust_level"].forEach((key) => {
+    if (post[key] !== undefined && post[key] !== null) user[key] = post[key];
   });
+  topic._randomHighlightsUsersById[post.user_id] = user;
 }
 
 function authorAllowed(topic, post) {
