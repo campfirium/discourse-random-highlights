@@ -25,6 +25,7 @@ const EXPECTED_TRACKED_FILES = [
   ".editorconfig",
   ".gitattributes",
   ".github/ISSUE_TEMPLATE/bug_report.yml",
+  ".github/ISSUE_TEMPLATE/config.yml",
   ".gitignore",
   "CHANGELOG.md",
   "CONTRIBUTING.md",
@@ -195,6 +196,7 @@ const readme = read("README.md");
 const changelog = read("CHANGELOG.md");
 const security = read("SECURITY.md");
 const bugReportTemplate = read(".github/ISSUE_TEMPLATE/bug_report.yml");
+const issueTemplateConfig = read(".github/ISSUE_TEMPLATE/config.yml");
 const releaseChecklist = read("docs/release-checklist.md");
 const settings = parseSettingsYaml("settings.yml");
 const settingNames = [...settings.keys()];
@@ -285,6 +287,9 @@ if (!files.includes("docs/release-checklist.md")) fail("docs/release-checklist.m
 if (!files.includes(".github/ISSUE_TEMPLATE/bug_report.yml")) {
   fail(".github/ISSUE_TEMPLATE/bug_report.yml: missing from tracked files");
 }
+if (!files.includes(".github/ISSUE_TEMPLATE/config.yml")) {
+  fail(".github/ISSUE_TEMPLATE/config.yml: missing from tracked files");
+}
 if (!readme.includes("SECURITY.md")) fail("README.md: missing SECURITY.md reference");
 if (!readme.includes("docs/release-checklist.md")) fail("README.md: missing release checklist link");
 for (const requiredReadmeText of [
@@ -333,6 +338,15 @@ for (const requiredIssueField of [
 ]) {
   if (!bugReportTemplate.includes(`id: ${requiredIssueField}`)) {
     fail(`bug_report.yml: missing field ${requiredIssueField}`);
+  }
+}
+for (const requiredIssueConfigText of [
+  "blank_issues_enabled: false",
+  "SECURITY.md",
+  "Security policy"
+]) {
+  if (!issueTemplateConfig.includes(requiredIssueConfigText)) {
+    fail(`config.yml: missing issue template config ${requiredIssueConfigText}`);
   }
 }
 for (const requiredReleaseGate of [
