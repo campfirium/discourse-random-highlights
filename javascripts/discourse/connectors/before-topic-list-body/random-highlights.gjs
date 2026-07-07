@@ -190,7 +190,7 @@ export default class RandomHighlights extends Component {
   }
 
   get userPath() {
-    return this.username ? "/u/" + this.username : "";
+    return this.username ? "/u/" + encodeURIComponent(this.username) : "";
   }
 
   get postCount() {
