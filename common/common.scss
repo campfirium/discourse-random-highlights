@@ -1,3 +1,22 @@
+.random-highlights-body {
+  --random-highlight-bg: #{$highlight_light_background};
+  --random-highlight-text: #{$highlight_light_text};
+  --random-highlight-border: #{$highlight_light_border};
+}
+
+.random-highlight--custom {
+  background: var(--random-highlight-bg);
+  box-shadow: inset 3px 0 0 var(--random-highlight-border);
+}
+
+.random-highlight--custom .title,
+.random-highlight--custom .raw-link,
+.random-highlight--custom small,
+.random-highlight--custom .number,
+.random-highlight--custom .relative-date {
+  color: var(--random-highlight-text);
+}
+
 .random-highlight .title {
   display: block;
   opacity: 0.62;
@@ -16,6 +35,14 @@
 
   .random-highlight small {
     text-align: right;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .random-highlights-body {
+    --random-highlight-bg: #{$highlight_dark_background};
+    --random-highlight-text: #{$highlight_dark_text};
+    --random-highlight-border: #{$highlight_dark_border};
   }
 }
 

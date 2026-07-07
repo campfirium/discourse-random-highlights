@@ -8,6 +8,8 @@ const MAX_EXCERPT_LENGTH = Number(settings.max_excerpt_length || 220);
 const CACHE_MS = Number(settings.topic_cache_minutes || 5) * 60 * 1000;
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
+const USE_CUSTOM_STYLE = settings.highlight_style_mode !== "native";
+const SHOW_ORIGINAL_AUTHOR = settings.random_item_author_mode !== "system";
 
 function parseIdList(value) {
   return String(value || "")
@@ -143,7 +145,16 @@ export default class RandomHighlights extends Component {
     return window.innerWidth > 1024;
   }
 
+  get rowClass() {
+    return USE_CUSTOM_STYLE ? "random-highlight topic-list-item random-highlight--custom" : "random-highlight topic-list-item";
+  }
+
+  get showAuthor() {
+    return SHOW_ORIGINAL_AUTHOR;
+  }
+
   get user() {
+    if (!this.showAuthor) return null;
     const topic = this.entry?.topic;
     const poster = originalPoster(topic);
     return poster && topic?._randomHighlightsUsersById ? topic._randomHighlightsUsersById[poster.user_id] : null;
@@ -151,6 +162,10 @@ export default class RandomHighlights extends Component {
 
   get avatar() {
     return avatarUrl(this.user, 48);
+  }
+
+  get showAvatar() {
+    return this.showAuthor && this.avatar;
   }
 
   get username() {
@@ -299,7 +314,7 @@ export default class RandomHighlights extends Component {
   <template>
     {{#if this.entry}}
       <tbody class="random-highlights-body">
-        <tr class="random-highlight topic-list-item">
+        <tr class={{this.rowClass}}>
           <td class="main-link clearfix topic-list-data" colspan="1">
             <span class="link-top-line" role="heading" aria-level="2">
               <a href={{this.entry.href}} class="title raw-link raw-topic-link">
@@ -313,7 +328,7 @@ export default class RandomHighlights extends Component {
 
           {{#if this.isDesktop}}
             <td class="posters topic-list-data theme-avatar-small">
-              {{#if this.avatar}}
+              {{#if this.showAvatar}}
                 <a href={{this.userPath}} data-user-card={{this.username}} class="latest single">
                   <img alt="" width="24" height="24" src={{this.avatar}} class="avatar latest single" title={{this.username}}>
                 </a>

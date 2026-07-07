@@ -29,6 +29,10 @@ No package registry or external service is required. Public distribution is norm
 - `composer_min_trust_level`: optional minimum trust level for the composer button.
 - `allowed_author_user_ids`: optional author allowlist for displayed source topics.
 - `allowed_author_min_trust_level`: optional minimum trust level for displayed source topics.
+- `highlight_style_mode`: choose this component's custom row styling or the site's native topic-list styling.
+- `highlight_light_background`, `highlight_light_text`, `highlight_light_border`: custom row colors for light color schemes.
+- `highlight_dark_background`, `highlight_dark_text`, `highlight_dark_border`: custom row colors for dark color schemes.
+- `random_item_author_mode`: choose `original_author` to show the source topic author avatar, or `system` to hide author avatar/user-card presentation.
 
 The component does not ship with opinionated default tag names. Sites can choose separate tags for short topics and excerpt topics, or set both settings to the same tag to combine both modes into one pool.
 
