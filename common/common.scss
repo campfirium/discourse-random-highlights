@@ -17,6 +17,14 @@
   color: var(--random-highlight-text);
 }
 
+.random-highlight.random-highlight--custom .title {
+  opacity: 1;
+}
+
+.random-highlight.random-highlight--custom small {
+  opacity: 0.78;
+}
+
 .random-highlight .title {
   display: block;
   opacity: 0.62;
