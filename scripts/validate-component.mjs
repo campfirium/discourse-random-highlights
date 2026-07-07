@@ -145,6 +145,7 @@ function trackedText(files) {
 const files = trackedFiles();
 const eolRows = trackedEolRows();
 const about = parseJson("about.json");
+const editorconfig = read(".editorconfig");
 const gitattributes = read(".gitattributes");
 const readme = read("README.md");
 const changelog = read("CHANGELOG.md");
@@ -177,6 +178,19 @@ if (about?.about_url && !readme.includes(about.about_url)) {
 }
 
 if (!gitattributes.includes("eol=lf")) fail(".gitattributes: missing LF line-ending rule");
+if (!files.includes(".editorconfig")) fail(".editorconfig: missing from tracked files");
+for (const requiredEditorconfigRule of [
+  "root = true",
+  "charset = utf-8",
+  "end_of_line = lf",
+  "insert_final_newline = true",
+  "indent_style = space",
+  "indent_size = 2"
+]) {
+  if (!editorconfig.includes(requiredEditorconfigRule)) {
+    fail(`.editorconfig: missing rule ${requiredEditorconfigRule}`);
+  }
+}
 for (const row of eolRows) {
   const pathMatch = /\t(.+)$/.exec(row);
   const worktreeMatch = /\bw\/(\S+)/.exec(row);

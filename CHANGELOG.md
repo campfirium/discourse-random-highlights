@@ -27,5 +27,6 @@
 - Clarify that queue rotation avoids immediate source-topic repeats, not per-excerpt repeats.
 - Guard against tagging the unreleased version before runtime release validation passes.
 - Validate LF line-ending rules for tracked component files.
+- Add editor configuration guardrails for line endings, charset, final newline, and indentation.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.
