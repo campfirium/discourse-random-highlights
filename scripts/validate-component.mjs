@@ -153,6 +153,23 @@ for (const key of [...titleKeys, ...composerExampleKeys]) {
   if (!localeKeys.has(key)) fail(`locales/en.yml: missing locale key ${key}`);
 }
 
+if (!localeKeys.has("en.theme_metadata.description")) {
+  fail("locales/en.yml: missing theme_metadata.description");
+}
+for (const setting of settingNames) {
+  const key = `en.theme_metadata.settings.${setting}`;
+  if (!localeKeys.has(key)) fail(`locales/en.yml: missing locale key ${key}`);
+}
+for (const [settingName, setting] of settings) {
+  if (setting.fields.get("type") !== "enum") continue;
+  const descriptionKey = `en.theme_metadata.settings.${settingName}.description`;
+  if (!localeKeys.has(descriptionKey)) fail(`locales/en.yml: missing locale key ${descriptionKey}`);
+  for (const choice of setting.choices) {
+    const key = `en.theme_metadata.settings.${settingName}.choices.${choice}`;
+    if (!localeKeys.has(key)) fail(`locales/en.yml: missing locale key ${key}`);
+  }
+}
+
 for (const className of ["random-highlight", "random-highlights-body", "random-highlight--custom"]) {
   if (!gjs.includes(className)) fail(`GJS: missing class ${className}`);
   if (!scss.includes(className)) fail(`SCSS: missing class ${className}`);

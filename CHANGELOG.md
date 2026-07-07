@@ -13,5 +13,6 @@
 - Preserve and enrich author metadata from topic payloads, and encode profile links.
 - Use a safer composer toolbar icon with Discourse source evidence.
 - Update installation instructions for the current Discourse Themes & components admin UI.
+- Add localized theme metadata and setting descriptions for the Discourse admin UI.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.
