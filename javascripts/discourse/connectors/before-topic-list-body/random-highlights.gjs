@@ -98,6 +98,18 @@ function authorUser(topic, post) {
   return userId && topic?._randomHighlightsUsersById ? topic._randomHighlightsUsersById[userId] : null;
 }
 
+function rememberPostUser(topic, post) {
+  if (!topic || !post || !post.user_id) return;
+  topic._randomHighlightsUsersById = topic._randomHighlightsUsersById || {};
+  topic._randomHighlightsUsersById[post.user_id] = Object.assign({}, topic._randomHighlightsUsersById[post.user_id], {
+    id: post.user_id,
+    username: post.username,
+    name: post.name,
+    avatar_template: post.avatar_template,
+    trust_level: post.trust_level
+  });
+}
+
 function authorAllowed(topic, post) {
   const allowedIds = parseIdList(settings.allowed_author_user_ids);
   if (allowedIds.length && !allowedIds.includes(Number(post && post.user_id))) return false;
@@ -268,6 +280,7 @@ export default class RandomHighlights extends Component {
 
     const payload = await response.json();
     const post = firstPost(payload);
+    rememberPostUser(topic, post);
     if (!post || !authorAllowed(topic, post)) return [];
     return this.extractHighlights(topic, post);
   }
