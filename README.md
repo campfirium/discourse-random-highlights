@@ -26,6 +26,14 @@ This component targets modern Discourse theme components using Glimmer `.gjs` co
 
 Discourse installs and updates theme components from the Git repository. After changing settings or updating the component, refresh the affected theme and verify the topic list and composer behavior on the target site.
 
+## Data and Security
+
+The component reads source data from Discourse JSON endpoints that the current visitor can already access. It does not add server-side permissions, expose private topics, migrate old content, or write database records.
+
+The author and composer allowlist settings are client-side filtering for presentation and workflow control. They are not a security boundary.
+
+The browser keeps only short-lived display state in memory and `sessionStorage` so the random queue can rotate without repeating the same items immediately.
+
 ## Support
 
 Report issues at `https://github.com/campfirium/discourse-random-highlights/issues`. Include your Discourse version, installed component commit, relevant component settings, browser console errors, and screenshots for rendering or styling problems.
@@ -60,7 +68,5 @@ It checks component metadata, setting references, README coverage, locale keys, 
 The component does not ship with opinionated default tag names. Sites can choose separate tags for short topics and excerpt topics, or set both settings to the same tag to combine both modes into one pool.
 
 ## Notes
-
-The allowlist settings are client-side filtering suitable for presentation and workflow control. They are not a security boundary.
 
 The composer button is intended for short inline selections. Complex multi-line or cross-structure selections should be checked in preview before relying on them as excerpt sources.
