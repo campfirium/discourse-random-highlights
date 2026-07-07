@@ -38,6 +38,8 @@ The browser keeps only short-lived display state in memory and `sessionStorage` 
 
 Report issues at `https://github.com/campfirium/discourse-random-highlights/issues`. Include your Discourse version, installed component commit, relevant component settings, browser console errors, and screenshots for rendering or styling problems.
 
+For security-sensitive reports, see `SECURITY.md`.
+
 ## Maintenance
 
 This repository includes a lightweight validation script:
