@@ -166,6 +166,16 @@ if (!readme.includes("docs/release-checklist.md")) fail("README.md: missing rele
 if (!readme.includes("github.com/campfirium/discourse-random-highlights/issues")) {
   fail("README.md: missing GitHub Issues support URL");
 }
+for (const requiredReadmeText of [
+  "## Configuration",
+  "Create public source topics",
+  "`short_topic_tag` and `excerpt_topic_tag` to the same tag",
+  "composer preview"
+]) {
+  if (!readme.includes(requiredReadmeText)) {
+    fail(`README.md: missing configuration guidance: ${requiredReadmeText}`);
+  }
+}
 if (!security.includes("not treated as security boundaries")) {
   fail("SECURITY.md: missing client-side filtering boundary statement");
 }

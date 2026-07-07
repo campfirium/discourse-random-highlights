@@ -22,5 +22,6 @@
 - Report missing validation inputs as structured validation failures instead of crashing.
 - Normalize tag, boolean, and trust-level settings before component runtime use.
 - Ignore malformed browser cache and display queue values instead of failing random-row loading.
+- Document the source-topic configuration workflow in the README.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.

@@ -18,6 +18,16 @@ Clicking a highlight opens the source topic. On desktop, the component reuses to
 
 No package registry or external service is required. Public distribution is normally done by publishing a Git repository and, if desired, posting a topic in the Discourse Meta theme category.
 
+## Configuration
+
+Create public source topics with tags that match the component settings:
+
+- For `short_topic_tag`, tag short topics whose first posts should appear as whole random items.
+- For `excerpt_topic_tag`, tag longer source topics and wrap useful inline excerpts in `<mark>...</mark>`.
+- To combine both modes into one pool, set `short_topic_tag` and `excerpt_topic_tag` to the same tag.
+
+The optional composer toolbar button can wrap selected text in `<mark>...</mark>`. It is intended for short inline selections; check the composer preview before relying on complex multi-line or cross-structure selections as excerpt sources.
+
 ## Compatibility
 
 This component targets modern Discourse theme components using Glimmer `.gjs` connectors and the Discourse plugin API toolbar hook. Validate it on your target Discourse version before enabling it on a production theme.
@@ -70,7 +80,3 @@ It checks component metadata, setting references, README coverage, locale keys, 
 - `random_item_author_mode`: choose `original_author` to show the source topic author avatar, or `system` to hide author avatar/user-card presentation.
 
 The component does not ship with opinionated default tag names. Sites can choose separate tags for short topics and excerpt topics, or set both settings to the same tag to combine both modes into one pool.
-
-## Notes
-
-The composer button is intended for short inline selections. Complex multi-line or cross-structure selections should be checked in preview before relying on them as excerpt sources.
