@@ -170,11 +170,15 @@ for (const requiredReadmeText of [
   "## Configuration",
   "Create public source topics",
   "`short_topic_tag` and `excerpt_topic_tag` to the same tag",
-  "composer preview"
+  "composer preview",
+  "same topic"
 ]) {
   if (!readme.includes(requiredReadmeText)) {
     fail(`README.md: missing configuration guidance: ${requiredReadmeText}`);
   }
+}
+if (readme.includes("same items immediately")) {
+  fail("README.md: queue wording should not over-promise per-item de-duplication");
 }
 if (!security.includes("not treated as security boundaries")) {
   fail("SECURITY.md: missing client-side filtering boundary statement");

@@ -44,7 +44,7 @@ The component reads source data from Discourse JSON endpoints that the current v
 
 The author and composer allowlist settings are client-side filtering for presentation and workflow control. They are not a security boundary.
 
-The browser keeps only short-lived display state in memory and `sessionStorage` so the random queue can rotate without repeating the same items immediately.
+The browser keeps only short-lived display state in memory and `sessionStorage` so the random queue can rotate through source topics without immediately repeating the same topic.
 
 ## Support
 
