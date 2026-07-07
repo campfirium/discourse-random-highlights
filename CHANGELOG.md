@@ -33,5 +33,6 @@
 - Validate repository URLs across Git remote, `about.json`, README, support links, and the release checklist.
 - Guard public distribution against site-specific tag defaults and local maintenance artifacts.
 - Document the unreleased validation status in the README.
+- Validate the expected public tracked file list.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.

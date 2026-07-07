@@ -21,6 +21,25 @@ const EXPECTED_REPOSITORY_URL = "https://github.com/campfirium/discourse-random-
 const EXPECTED_LICENSE_URL = `${EXPECTED_REPOSITORY_URL}/blob/main/LICENSE`;
 const EXPECTED_ISSUES_URL = `${EXPECTED_REPOSITORY_URL}/issues`;
 const SITE_SPECIFIC_TAG_NAMES = ["twig", "twigs"];
+const EXPECTED_TRACKED_FILES = [
+  ".editorconfig",
+  ".gitattributes",
+  ".github/ISSUE_TEMPLATE/bug_report.yml",
+  ".gitignore",
+  "CHANGELOG.md",
+  "CONTRIBUTING.md",
+  "LICENSE",
+  "README.md",
+  "SECURITY.md",
+  "about.json",
+  "common/common.scss",
+  "common/head_tag.html",
+  "docs/release-checklist.md",
+  "javascripts/discourse/connectors/before-topic-list-body/random-highlights.gjs",
+  "locales/en.yml",
+  "scripts/validate-component.mjs",
+  "settings.yml"
+];
 
 function read(relativePath) {
   if (readCache.has(relativePath)) return readCache.get(relativePath);
@@ -164,6 +183,8 @@ function trackedText(files) {
 }
 
 const files = trackedFiles();
+const expectedFileSet = new Set(EXPECTED_TRACKED_FILES);
+const actualFileSet = new Set(files);
 const eolRows = trackedEolRows();
 const originUrl = gitConfig("remote.origin.url");
 const about = parseJson("about.json");
@@ -441,6 +462,9 @@ if (!gjs.includes("Array.isArray(storedQueue)")) {
 }
 
 for (const file of files) {
+  if (!expectedFileSet.has(file)) {
+    fail(`Tracked unexpected public file: ${file}`);
+  }
   if (file.startsWith(".lab/") || file.startsWith(".agents/") || file.startsWith(".tmp/")) {
     fail(`Tracked local-only file: ${file}`);
   }
@@ -452,6 +476,11 @@ for (const file of files) {
   }
   if (/(^|\/)(migration|backup|repair|audit)[^/]*\.(mjs|js|json|md)$/i.test(file)) {
     fail(`Tracked local maintenance artifact: ${file}`);
+  }
+}
+for (const file of EXPECTED_TRACKED_FILES) {
+  if (!actualFileSet.has(file)) {
+    fail(`Missing expected public file: ${file}`);
   }
 }
 
