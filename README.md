@@ -24,6 +24,7 @@ No package registry or external service is required. Public distribution is norm
 - `excerpt_topic_tag`: tag used for long-form source topics. Each `<mark>` excerpt in the first post is used as one random item. Leave empty to disable this source mode.
 - `highlight_selector`: selector used to extract marked excerpts. Defaults to `mark`.
 - `max_excerpt_length`: maximum displayed text length.
+- `topic_cache_minutes`: how long tagged topic lists are cached in the browser.
 - `show_composer_button`: adds a composer toolbar button that wraps selected text in `<mark>`.
 - `composer_allowed_user_ids`: optional UI allowlist for the composer button.
 - `composer_min_trust_level`: optional minimum trust level for the composer button.
