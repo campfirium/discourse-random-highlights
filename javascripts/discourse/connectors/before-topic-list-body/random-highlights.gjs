@@ -4,12 +4,18 @@ import { tracked } from "@glimmer/tracking";
 const SHORT_TOPIC_TAG = settings.short_topic_tag || "";
 const EXCERPT_TOPIC_TAG = settings.excerpt_topic_tag || "";
 const HIGHLIGHT_SELECTOR = settings.highlight_selector || "mark";
-const MAX_EXCERPT_LENGTH = Number(settings.max_excerpt_length || 220);
-const CACHE_MS = Number(settings.topic_cache_minutes || 5) * 60 * 1000;
+const MAX_EXCERPT_LENGTH = numberSetting(settings.max_excerpt_length, 220, 40, 1000);
+const CACHE_MS = numberSetting(settings.topic_cache_minutes, 5, 1, 60) * 60 * 1000;
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
 const USE_CUSTOM_STYLE = settings.highlight_style_mode !== "native";
 const SHOW_ORIGINAL_AUTHOR = settings.random_item_author_mode !== "system";
+
+function numberSetting(value, fallback, min, max) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(max, Math.max(min, number));
+}
 
 function parseIdList(value) {
   return String(value || "")
