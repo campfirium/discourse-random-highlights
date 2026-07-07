@@ -30,5 +30,6 @@
 - Add editor configuration guardrails for line endings, charset, final newline, and indentation.
 - Add contributor guidance for validation, release checks, and public repository boundaries.
 - Guard unreleased `about.json` metadata against premature compatibility or screenshot claims.
+- Validate repository URLs across Git remote, `about.json`, README, support links, and the release checklist.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.

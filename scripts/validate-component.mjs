@@ -17,6 +17,9 @@ const SUPPORTED_THEME_SETTING_TYPES = new Set([
   "upload",
   "objects"
 ]);
+const EXPECTED_REPOSITORY_URL = "https://github.com/campfirium/discourse-random-highlights";
+const EXPECTED_LICENSE_URL = `${EXPECTED_REPOSITORY_URL}/blob/main/LICENSE`;
+const EXPECTED_ISSUES_URL = `${EXPECTED_REPOSITORY_URL}/issues`;
 
 function read(relativePath) {
   if (readCache.has(relativePath)) return readCache.get(relativePath);
@@ -135,6 +138,23 @@ function gitTags(pattern) {
     .filter(Boolean);
 }
 
+function gitConfig(key) {
+  try {
+    return execFileSync("git", ["config", "--get", key], { encoding: "utf8" }).trim();
+  } catch (error) {
+    fail(`git config ${key}: failed to read`);
+    return "";
+  }
+}
+
+function normalizeRepositoryUrl(url) {
+  const value = String(url || "").trim();
+  const sshMatch = /^git@github\.com:([^/]+\/[^/]+?)(?:\.git)?$/.exec(value);
+  if (sshMatch) return `https://github.com/${sshMatch[1]}`;
+
+  return value.replace(/\.git$/, "").replace(/\/$/, "");
+}
+
 function trackedText(files) {
   return files
     .filter((file) => /\.(md|json|ya?ml|scss|html|gjs|js|mjs|txt)$/.test(file))
@@ -144,6 +164,7 @@ function trackedText(files) {
 
 const files = trackedFiles();
 const eolRows = trackedEolRows();
+const originUrl = gitConfig("remote.origin.url");
 const about = parseJson("about.json");
 const editorconfig = read(".editorconfig");
 const gitattributes = read(".gitattributes");
@@ -164,6 +185,15 @@ const componentText = [gjs, headTag, scss].join("\n");
 const publicText = trackedText(files);
 
 if (about?.component !== true) fail('about.json: expected "component": true');
+if (normalizeRepositoryUrl(originUrl) !== EXPECTED_REPOSITORY_URL) {
+  fail(`git remote origin: expected ${EXPECTED_REPOSITORY_URL}, found ${originUrl || "(missing)"}`);
+}
+if (about?.about_url !== EXPECTED_REPOSITORY_URL) {
+  fail(`about.json: expected about_url ${EXPECTED_REPOSITORY_URL}`);
+}
+if (about?.license_url !== EXPECTED_LICENSE_URL) {
+  fail(`about.json: expected license_url ${EXPECTED_LICENSE_URL}`);
+}
 if (!about?.theme_version) fail("about.json: missing theme_version");
 if (about?.theme_version && !changelog.includes(`## ${about.theme_version}`)) {
   fail(`CHANGELOG.md: missing section for theme_version ${about.theme_version}`);
@@ -182,6 +212,15 @@ if (versionIsUnreleased) {
 }
 if (about?.about_url && !readme.includes(about.about_url)) {
   fail(`README.md: missing about_url ${about.about_url}`);
+}
+if (!readme.includes(`\`${EXPECTED_REPOSITORY_URL}\``)) {
+  fail(`README.md: missing install URL ${EXPECTED_REPOSITORY_URL}`);
+}
+if (!readme.includes(EXPECTED_ISSUES_URL)) {
+  fail(`README.md: missing support URL ${EXPECTED_ISSUES_URL}`);
+}
+if (!releaseChecklist.includes(`Install from \`${EXPECTED_REPOSITORY_URL}\``)) {
+  fail(`docs/release-checklist.md: missing install URL ${EXPECTED_REPOSITORY_URL}`);
 }
 
 if (!gitattributes.includes("eol=lf")) fail(".gitattributes: missing LF line-ending rule");
@@ -215,9 +254,6 @@ if (!files.includes(".github/ISSUE_TEMPLATE/bug_report.yml")) {
 }
 if (!readme.includes("SECURITY.md")) fail("README.md: missing SECURITY.md reference");
 if (!readme.includes("docs/release-checklist.md")) fail("README.md: missing release checklist link");
-if (!readme.includes("github.com/campfirium/discourse-random-highlights/issues")) {
-  fail("README.md: missing GitHub Issues support URL");
-}
 for (const requiredReadmeText of [
   "## Configuration",
   "Create public source topics",
