@@ -1,0 +1,13 @@
+# Changelog
+
+## 0.1.0 - Unreleased
+
+- Initial Discourse theme component structure.
+- Add configurable short-topic and marked-excerpt source modes.
+- Render one random highlight in the topic list through the `before-topic-list-body` connector.
+- Add optional composer toolbar button for wrapping selected text in `<mark>...</mark>`.
+- Add client-side UI/workflow filters for composer visibility and source authors.
+- Add configurable custom row colors for light and dark color schemes.
+- Add original-author and neutral/system presentation modes.
+
+This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.

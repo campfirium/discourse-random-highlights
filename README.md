@@ -18,6 +18,14 @@ Clicking a highlight opens the source topic. On desktop, the component reuses to
 
 No package registry or external service is required. Public distribution is normally done by publishing a Git repository and, if desired, posting a topic in the Discourse Meta theme category.
 
+## Compatibility
+
+This component targets modern Discourse theme components using Glimmer `.gjs` connectors and the Discourse plugin API toolbar hook. Validate it on your target Discourse version before enabling it on a production theme.
+
+## Updates
+
+Discourse installs and updates theme components from the Git repository. After changing settings or updating the component, refresh the affected theme and verify the topic list and composer behavior on the target site.
+
 ## Settings
 
 - `short_topic_tag`: tag used for short topics. The first post is used as one random item. Leave empty to disable this source mode.
