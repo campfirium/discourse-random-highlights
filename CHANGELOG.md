@@ -18,5 +18,6 @@
 - Clarify data, cache, migration, and security boundaries in the README.
 - Add a SECURITY policy describing report scope and client-side filtering limits.
 - Validate support and security entry points in the component validation script.
+- Add a public release checklist for install, update, rendering, composer, styling, and tagging gates.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.

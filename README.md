@@ -22,6 +22,8 @@ No package registry or external service is required. Public distribution is norm
 
 This component targets modern Discourse theme components using Glimmer `.gjs` connectors and the Discourse plugin API toolbar hook. Validate it on your target Discourse version before enabling it on a production theme.
 
+See [the release checklist](docs/release-checklist.md) for the install, update, rendering, composer, and styling checks required before tagging a public release.
+
 ## Updates
 
 Discourse installs and updates theme components from the Git repository. After changing settings or updating the component, refresh the affected theme and verify the topic list and composer behavior on the target site.
