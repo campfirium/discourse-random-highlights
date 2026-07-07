@@ -9,8 +9,10 @@ const CACHE_MS = numberSetting(settings.topic_cache_minutes, 5, 1, 60) * 60 * 10
 const AUTHOR_MIN_TRUST_LEVEL = numberSetting(settings.allowed_author_min_trust_level, 0, 0, 4);
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
-const USE_CUSTOM_STYLE = settings.highlight_style_mode !== "native";
-const SHOW_ORIGINAL_AUTHOR = settings.random_item_author_mode !== "system";
+const HIGHLIGHT_STYLE_MODE = String(settings.highlight_style_mode || "custom").trim();
+const RANDOM_ITEM_AUTHOR_MODE = String(settings.random_item_author_mode || "original_author").trim();
+const USE_CUSTOM_STYLE = HIGHLIGHT_STYLE_MODE !== "native";
+const SHOW_ORIGINAL_AUTHOR = RANDOM_ITEM_AUTHOR_MODE !== "system";
 
 function numberSetting(value, fallback, min, max) {
   const number = Number(value);

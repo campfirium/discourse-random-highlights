@@ -314,6 +314,12 @@ if (!headTag.includes("COMPOSER_MIN_TRUST_LEVEL")) {
 if (!gjs.includes("AUTHOR_MIN_TRUST_LEVEL")) {
   fail("GJS: missing author trust-level normalization");
 }
+if (!gjs.includes("HIGHLIGHT_STYLE_MODE")) {
+  fail("GJS: missing highlight style mode normalization");
+}
+if (!gjs.includes("RANDOM_ITEM_AUTHOR_MODE")) {
+  fail("GJS: missing random item author mode normalization");
+}
 if (!gjs.includes('String(settings.short_topic_tag || "").trim()')) {
   fail("GJS: source tags should be trimmed before cache/signature use");
 }

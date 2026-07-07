@@ -21,6 +21,7 @@
 - Add a public release checklist for install, update, rendering, composer, styling, and tagging gates.
 - Report missing validation inputs as structured validation failures instead of crashing.
 - Normalize tag, boolean, and trust-level settings before component runtime use.
+- Normalize style and author mode enum settings before component runtime use.
 - Ignore malformed browser cache and display queue values instead of failing random-row loading.
 - Document the source-topic configuration workflow in the README.
 - Clarify that queue rotation avoids immediate source-topic repeats, not per-excerpt repeats.
