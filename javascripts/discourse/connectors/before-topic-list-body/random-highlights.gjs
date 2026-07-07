@@ -93,10 +93,17 @@ function firstPost(payload) {
   return posts && posts.length ? posts[0] : null;
 }
 
-function authorAllowed(post) {
+function authorUser(topic, post) {
+  const userId = Number(post && post.user_id);
+  return userId && topic?._randomHighlightsUsersById ? topic._randomHighlightsUsersById[userId] : null;
+}
+
+function authorAllowed(topic, post) {
   const allowedIds = parseIdList(settings.allowed_author_user_ids);
   if (allowedIds.length && !allowedIds.includes(Number(post && post.user_id))) return false;
-  return Number((post && post.trust_level) || 0) >= Number(settings.allowed_author_min_trust_level || 0);
+  const user = authorUser(topic, post);
+  const trustLevel = Number((post && post.trust_level) ?? (user && user.trust_level) ?? 0);
+  return trustLevel >= Number(settings.allowed_author_min_trust_level || 0);
 }
 
 function avatarUrl(user, size) {
@@ -255,7 +262,7 @@ export default class RandomHighlights extends Component {
 
     const payload = await response.json();
     const post = firstPost(payload);
-    if (!post || !authorAllowed(post)) return [];
+    if (!post || !authorAllowed(topic, post)) return [];
     return this.extractHighlights(topic, post);
   }
 
