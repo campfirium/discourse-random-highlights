@@ -20,6 +20,7 @@ const SUPPORTED_THEME_SETTING_TYPES = new Set([
 const EXPECTED_REPOSITORY_URL = "https://github.com/campfirium/discourse-random-highlights";
 const EXPECTED_LICENSE_URL = `${EXPECTED_REPOSITORY_URL}/blob/main/LICENSE`;
 const EXPECTED_ISSUES_URL = `${EXPECTED_REPOSITORY_URL}/issues`;
+const EXPECTED_ABOUT_KEYS = new Set(["name", "component", "license_url", "about_url", "authors", "theme_version"]);
 const SITE_SPECIFIC_TAG_NAMES = ["twig", "twigs"];
 const EXPECTED_TRACKED_FILES = [
   ".editorconfig",
@@ -210,7 +211,16 @@ const componentText = [gjs, headTag, scss].join("\n");
 const publicText = trackedText(files);
 const publicDistributionText = trackedText(files.filter((file) => file !== "scripts/validate-component.mjs"));
 
+if (about?.name !== "Random Highlights") fail('about.json: expected name "Random Highlights"');
+if (about?.authors !== "Campfirium") fail('about.json: expected authors "Campfirium"');
 if (about?.component !== true) fail('about.json: expected "component": true');
+if (about) {
+  for (const key of Object.keys(about)) {
+    if (!EXPECTED_ABOUT_KEYS.has(key) && !["minimum_discourse_version", "maximum_discourse_version", "screenshots"].includes(key)) {
+      fail(`about.json: unexpected field ${key}`);
+    }
+  }
+}
 if (normalizeRepositoryUrl(originUrl) !== EXPECTED_REPOSITORY_URL) {
   fail(`git remote origin: expected ${EXPECTED_REPOSITORY_URL}, found ${originUrl || "(missing)"}`);
 }
@@ -227,6 +237,9 @@ if (!license.includes("Copyright (c) 2026 Campfirium")) {
   fail("LICENSE: expected Campfirium copyright notice");
 }
 if (!about?.theme_version) fail("about.json: missing theme_version");
+if (about?.theme_version && !/^\d+\.\d+\.\d+$/.test(about.theme_version)) {
+  fail(`about.json: theme_version should use x.y.z semver, found ${about.theme_version}`);
+}
 if (about?.theme_version && !changelog.includes(`## ${about.theme_version}`)) {
   fail(`CHANGELOG.md: missing section for theme_version ${about.theme_version}`);
 }
