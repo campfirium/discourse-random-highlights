@@ -9,6 +9,10 @@ It supports two source modes:
 
 Clicking a highlight opens the source topic. On desktop, the component reuses topic metadata from Discourse tag JSON for the poster avatar, post count, view count, and activity time. The display row is rendered through the `before-topic-list-body` outlet instead of mutating the topic list DOM after load.
 
+## Release Status
+
+`main` is installable for validation, but `v0.1.0` is not tagged yet. Before using this component on a production theme, validate install, Git update, topic-list rendering, composer behavior, and styling on a non-production Discourse theme.
+
 ## Installation
 
 1. Open Discourse admin: `Admin > Appearance > Themes & components`.

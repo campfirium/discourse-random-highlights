@@ -211,6 +211,16 @@ if (versionIsUnreleased) {
       fail(`about.json: ${blockedMetadata} must wait for runtime release validation`);
     }
   }
+  for (const requiredReadmeReleaseStatus of [
+    "## Release Status",
+    "`v0.1.0` is not tagged yet",
+    "install, Git update, topic-list rendering, composer behavior, and styling",
+    "non-production Discourse theme"
+  ]) {
+    if (!readme.includes(requiredReadmeReleaseStatus)) {
+      fail(`README.md: missing unreleased status text: ${requiredReadmeReleaseStatus}`);
+    }
+  }
 }
 if (about?.about_url && !readme.includes(about.about_url)) {
   fail(`README.md: missing about_url ${about.about_url}`);
