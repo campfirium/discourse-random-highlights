@@ -1,0 +1,38 @@
+short_topic_tag:
+  default: ""
+  description: "Tag for short topics. The first post is used as a whole random highlight. Leave empty to disable short-topic sources."
+excerpt_topic_tag:
+  default: ""
+  description: "Tag for long topics. Marked excerpts in the first post are used as random highlights. Leave empty to disable excerpt sources."
+highlight_selector:
+  default: mark
+  description: "CSS selector used to extract marked excerpts from the first post cooked HTML."
+max_excerpt_length:
+  default: 220
+  min: 40
+  max: 1000
+  description: "Maximum characters displayed for each highlight."
+topic_cache_minutes:
+  default: 5
+  min: 1
+  max: 60
+  description: "How long to cache the tagged topic lists in the browser."
+show_composer_button:
+  default: true
+  description: "Add a composer toolbar button that wraps selected text with <mark>."
+composer_allowed_user_ids:
+  default: ""
+  description: "Optional comma-separated user IDs that can see the composer button. Empty means everyone. This is UI filtering, not security."
+composer_min_trust_level:
+  default: 0
+  min: 0
+  max: 4
+  description: "Minimum trust level required to see the composer button."
+allowed_author_user_ids:
+  default: ""
+  description: "Optional comma-separated author user IDs whose topics can appear. Empty means all authors."
+allowed_author_min_trust_level:
+  default: 0
+  min: 0
+  max: 4
+  description: "Minimum trust level for the first-post author to appear in the random pool."

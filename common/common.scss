@@ -1,0 +1,21 @@
+.random-highlight .title {
+  display: block;
+  opacity: 0.62;
+}
+
+.random-highlight small {
+  display: block;
+  margin-top: 0.45em;
+  opacity: 0.72;
+}
+
+@media screen and (max-width: 1024px) {
+  .random-highlight > td {
+    padding: 20px 0 !important;
+  }
+
+  .random-highlight small {
+    text-align: right;
+  }
+}
+

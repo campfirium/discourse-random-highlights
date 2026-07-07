@@ -1,0 +1,29 @@
+<script type="text/discourse-plugin" version="0.12.0">
+  function parseIdList(value) {
+    return String(value || "")
+      .split(/[,|\s]+/)
+      .map((item) => Number(String(item).trim()))
+      .filter((item) => Number.isFinite(item) && item > 0);
+  }
+
+  function currentUserAllowedForComposer() {
+    if (!settings.show_composer_button) return false;
+    const currentUser = api.getCurrentUser && api.getCurrentUser();
+    if (!currentUser) return false;
+    const allowedIds = parseIdList(settings.composer_allowed_user_ids);
+    if (allowedIds.length && !allowedIds.includes(Number(currentUser.id))) return false;
+    return Number(currentUser.trust_level || 0) >= Number(settings.composer_min_trust_level || 0);
+  }
+
+  if (currentUserAllowedForComposer() && api.onToolbarCreate) {
+    api.onToolbarCreate((toolbar) => {
+      toolbar.addButton({
+        id: "random-highlight-mark",
+        group: "fontStyles",
+        icon: "highlighter",
+        title: "Mark highlight",
+        perform: (event) => event.applySurround("<mark>", "</mark>", "highlight")
+      });
+    });
+  }
+</script>
