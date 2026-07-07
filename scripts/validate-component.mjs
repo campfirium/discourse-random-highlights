@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 
 const root = process.cwd();
 const failures = [];
+const readCache = new Map();
 const SUPPORTED_THEME_SETTING_TYPES = new Set([
   "integer",
   "float",
@@ -18,7 +19,16 @@ const SUPPORTED_THEME_SETTING_TYPES = new Set([
 ]);
 
 function read(relativePath) {
-  return fs.readFileSync(path.join(root, relativePath), "utf8");
+  if (readCache.has(relativePath)) return readCache.get(relativePath);
+  try {
+    const text = fs.readFileSync(path.join(root, relativePath), "utf8");
+    readCache.set(relativePath, text);
+    return text;
+  } catch (error) {
+    fail(`${relativePath}: failed to read: ${error.message}`);
+    readCache.set(relativePath, "");
+    return "";
+  }
 }
 
 function fail(message) {
