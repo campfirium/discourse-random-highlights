@@ -195,6 +195,7 @@ const contributing = read("CONTRIBUTING.md");
 const readme = read("README.md");
 const changelog = read("CHANGELOG.md");
 const security = read("SECURITY.md");
+const license = read("LICENSE");
 const bugReportTemplate = read(".github/ISSUE_TEMPLATE/bug_report.yml");
 const issueTemplateConfig = read(".github/ISSUE_TEMPLATE/config.yml");
 const releaseChecklist = read("docs/release-checklist.md");
@@ -218,6 +219,12 @@ if (about?.about_url !== EXPECTED_REPOSITORY_URL) {
 }
 if (about?.license_url !== EXPECTED_LICENSE_URL) {
   fail(`about.json: expected license_url ${EXPECTED_LICENSE_URL}`);
+}
+if (!license.startsWith("MIT License")) {
+  fail("LICENSE: expected MIT License");
+}
+if (!license.includes("Copyright (c) 2026 Campfirium")) {
+  fail("LICENSE: expected Campfirium copyright notice");
 }
 if (!about?.theme_version) fail("about.json: missing theme_version");
 if (about?.theme_version && !changelog.includes(`## ${about.theme_version}`)) {
@@ -291,6 +298,7 @@ if (!files.includes(".github/ISSUE_TEMPLATE/config.yml")) {
   fail(".github/ISSUE_TEMPLATE/config.yml: missing from tracked files");
 }
 if (!readme.includes("SECURITY.md")) fail("README.md: missing SECURITY.md reference");
+if (!readme.includes("[MIT License](LICENSE)")) fail("README.md: missing MIT License link");
 if (!readme.includes("docs/release-checklist.md")) fail("README.md: missing release checklist link");
 for (const requiredReadmeText of [
   "## Configuration",

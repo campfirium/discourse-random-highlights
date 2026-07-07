@@ -58,6 +58,10 @@ Report issues at `https://github.com/campfirium/discourse-random-highlights/issu
 
 For security-sensitive reports, see `SECURITY.md`.
 
+## License
+
+Random Highlights is released under the [MIT License](LICENSE).
+
 ## Maintenance
 
 This repository includes a lightweight validation script:

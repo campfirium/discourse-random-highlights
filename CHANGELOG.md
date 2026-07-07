@@ -36,5 +36,6 @@
 - Validate the expected public tracked file list.
 - Add issue template configuration for structured support reports.
 - Document and validate escaped-text rendering for source excerpts.
+- Document and validate the MIT license.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.
