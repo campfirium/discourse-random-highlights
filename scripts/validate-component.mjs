@@ -27,6 +27,7 @@ const EXPECTED_TRACKED_FILES = [
   ".gitattributes",
   ".github/ISSUE_TEMPLATE/bug_report.yml",
   ".github/ISSUE_TEMPLATE/config.yml",
+  ".github/workflows/validate.yml",
   ".gitignore",
   "CHANGELOG.md",
   "CONTRIBUTING.md",
