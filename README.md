@@ -48,7 +48,7 @@ This repository includes a lightweight validation script:
 node scripts/validate-component.mjs
 ```
 
-It checks component metadata, setting references, README coverage, locale keys, and a few compatibility guardrails. It does not build the theme or replace real Discourse install/update validation.
+It checks component metadata, setting references, README coverage, locale keys, support/security entry points, and compatibility guardrails. It does not build the theme or replace real Discourse install/update validation.
 
 ## Settings
 

@@ -124,6 +124,8 @@ const files = trackedFiles();
 const about = parseJson("about.json");
 const readme = read("README.md");
 const changelog = read("CHANGELOG.md");
+const security = read("SECURITY.md");
+const bugReportTemplate = read(".github/ISSUE_TEMPLATE/bug_report.yml");
 const settings = parseSettingsYaml("settings.yml");
 const settingNames = [...settings.keys()];
 const settingSet = new Set(settingNames);
@@ -141,6 +143,37 @@ if (about?.theme_version && !changelog.includes(`## ${about.theme_version}`)) {
 }
 if (about?.about_url && !readme.includes(about.about_url)) {
   fail(`README.md: missing about_url ${about.about_url}`);
+}
+
+if (!files.includes("SECURITY.md")) fail("SECURITY.md: missing from tracked files");
+if (!files.includes(".github/ISSUE_TEMPLATE/bug_report.yml")) {
+  fail(".github/ISSUE_TEMPLATE/bug_report.yml: missing from tracked files");
+}
+if (!readme.includes("SECURITY.md")) fail("README.md: missing SECURITY.md reference");
+if (!readme.includes("github.com/campfirium/discourse-random-highlights/issues")) {
+  fail("README.md: missing GitHub Issues support URL");
+}
+if (!security.includes("not treated as security boundaries")) {
+  fail("SECURITY.md: missing client-side filtering boundary statement");
+}
+for (const setting of [
+  "composer_allowed_user_ids",
+  "composer_min_trust_level",
+  "allowed_author_user_ids",
+  "allowed_author_min_trust_level"
+]) {
+  if (!security.includes(setting)) fail(`SECURITY.md: missing setting ${setting}`);
+}
+for (const requiredIssueField of [
+  "discourse-version",
+  "component-commit",
+  "settings",
+  "reproduction",
+  "evidence"
+]) {
+  if (!bugReportTemplate.includes(`id: ${requiredIssueField}`)) {
+    fail(`bug_report.yml: missing field ${requiredIssueField}`);
+  }
 }
 
 if (settings.size !== 18) {
