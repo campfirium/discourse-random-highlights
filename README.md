@@ -40,3 +40,5 @@ The component does not ship with opinionated default tag names. Sites can choose
 ## Notes
 
 The allowlist settings are client-side filtering suitable for presentation and workflow control. They are not a security boundary.
+
+The composer button is intended for short inline selections. Complex multi-line or cross-structure selections should be checked in preview before relying on them as excerpt sources.
