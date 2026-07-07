@@ -147,6 +147,7 @@ const eolRows = trackedEolRows();
 const about = parseJson("about.json");
 const editorconfig = read(".editorconfig");
 const gitattributes = read(".gitattributes");
+const contributing = read("CONTRIBUTING.md");
 const readme = read("README.md");
 const changelog = read("CHANGELOG.md");
 const security = read("SECURITY.md");
@@ -201,6 +202,7 @@ for (const row of eolRows) {
 }
 
 if (!files.includes("SECURITY.md")) fail("SECURITY.md: missing from tracked files");
+if (!files.includes("CONTRIBUTING.md")) fail("CONTRIBUTING.md: missing from tracked files");
 if (!files.includes("docs/release-checklist.md")) fail("docs/release-checklist.md: missing from tracked files");
 if (!files.includes(".github/ISSUE_TEMPLATE/bug_report.yml")) {
   fail(".github/ISSUE_TEMPLATE/bug_report.yml: missing from tracked files");
@@ -226,6 +228,18 @@ if (readme.includes("same items immediately")) {
 }
 if (!security.includes("not treated as security boundaries")) {
   fail("SECURITY.md: missing client-side filtering boundary statement");
+}
+for (const requiredContributingText of [
+  "node scripts/validate-component.mjs",
+  "CHANGELOG.md",
+  "docs/release-checklist.md",
+  "client-side user ID or trust-level settings as security boundaries",
+  "minimum_discourse_version",
+  "Campfirium migration scripts"
+]) {
+  if (!contributing.includes(requiredContributingText)) {
+    fail(`CONTRIBUTING.md: missing guidance: ${requiredContributingText}`);
+  }
 }
 for (const setting of [
   "composer_allowed_user_ids",

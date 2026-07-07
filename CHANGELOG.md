@@ -28,5 +28,6 @@
 - Guard against tagging the unreleased version before runtime release validation passes.
 - Validate LF line-ending rules for tracked component files.
 - Add editor configuration guardrails for line endings, charset, final newline, and indentation.
+- Add contributor guidance for validation, release checks, and public repository boundaries.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.
