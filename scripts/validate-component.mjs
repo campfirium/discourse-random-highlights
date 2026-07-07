@@ -279,6 +279,18 @@ if (!headTag.includes('icon: "pencil-alt"')) {
 if (headTag.includes('icon: "highlighter"')) {
   fail('common/head_tag.html: avoid unproven "highlighter" icon');
 }
+if (!headTag.includes("function booleanSetting")) {
+  fail("common/head_tag.html: missing composer boolean setting normalization");
+}
+if (!headTag.includes("COMPOSER_MIN_TRUST_LEVEL")) {
+  fail("common/head_tag.html: missing composer trust-level normalization");
+}
+if (!gjs.includes("AUTHOR_MIN_TRUST_LEVEL")) {
+  fail("GJS: missing author trust-level normalization");
+}
+if (!gjs.includes('String(settings.short_topic_tag || "").trim()')) {
+  fail("GJS: source tags should be trimmed before cache/signature use");
+}
 
 for (const file of files) {
   if (file.startsWith(".lab/") || file.startsWith(".agents/") || file.startsWith(".tmp/")) {

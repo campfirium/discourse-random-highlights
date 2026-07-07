@@ -20,5 +20,6 @@
 - Validate support and security entry points in the component validation script.
 - Add a public release checklist for install, update, rendering, composer, styling, and tagging gates.
 - Report missing validation inputs as structured validation failures instead of crashing.
+- Normalize tag, boolean, and trust-level settings before component runtime use.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.

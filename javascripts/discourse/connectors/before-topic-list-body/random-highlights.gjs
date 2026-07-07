@@ -1,11 +1,12 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 
-const SHORT_TOPIC_TAG = settings.short_topic_tag || "";
-const EXCERPT_TOPIC_TAG = settings.excerpt_topic_tag || "";
-const HIGHLIGHT_SELECTOR = settings.highlight_selector || "mark";
+const SHORT_TOPIC_TAG = String(settings.short_topic_tag || "").trim();
+const EXCERPT_TOPIC_TAG = String(settings.excerpt_topic_tag || "").trim();
+const HIGHLIGHT_SELECTOR = String(settings.highlight_selector || "mark").trim() || "mark";
 const MAX_EXCERPT_LENGTH = numberSetting(settings.max_excerpt_length, 220, 40, 1000);
 const CACHE_MS = numberSetting(settings.topic_cache_minutes, 5, 1, 60) * 60 * 1000;
+const AUTHOR_MIN_TRUST_LEVEL = numberSetting(settings.allowed_author_min_trust_level, 0, 0, 4);
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
 const USE_CUSTOM_STYLE = settings.highlight_style_mode !== "native";
@@ -25,8 +26,8 @@ function parseIdList(value) {
 }
 
 function sourceConfigs() {
-  const shortTag = String(SHORT_TOPIC_TAG || "").trim();
-  const excerptTag = String(EXCERPT_TOPIC_TAG || "").trim();
+  const shortTag = SHORT_TOPIC_TAG;
+  const excerptTag = EXCERPT_TOPIC_TAG;
   if (shortTag && excerptTag && shortTag === excerptTag) return [{ tag: shortTag, mode: "both" }];
   return [
     shortTag ? { tag: shortTag, mode: "short" } : null,
@@ -119,7 +120,7 @@ function authorAllowed(topic, post) {
   if (allowedIds.length && !allowedIds.includes(Number(post && post.user_id))) return false;
   const user = authorUser(topic, post);
   const trustLevel = Number((post && post.trust_level) ?? (user && user.trust_level) ?? 0);
-  return trustLevel >= Number(settings.allowed_author_min_trust_level || 0);
+  return trustLevel >= AUTHOR_MIN_TRUST_LEVEL;
 }
 
 function avatarUrl(user, size) {
