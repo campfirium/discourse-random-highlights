@@ -75,6 +75,17 @@ function htmlToText(html) {
   return normalizeText(element.textContent || "");
 }
 
+function queryHighlightNodes(root) {
+  try {
+    return Array.from(root.querySelectorAll(HIGHLIGHT_SELECTOR));
+  } catch (error) {
+    // Invalid admin-provided selectors should not break the topic list.
+    // eslint-disable-next-line no-console
+    console.warn("random highlights selector failed", error);
+    return [];
+  }
+}
+
 function firstPost(payload) {
   const posts = payload && payload.post_stream && payload.post_stream.posts;
   return posts && posts.length ? posts[0] : null;
@@ -238,7 +249,7 @@ export default class RandomHighlights extends Component {
     root.innerHTML = post.cooked || "";
 
     const mode = topic._randomHighlightsMode || "excerpt";
-    const entries = Array.from(root.querySelectorAll(HIGHLIGHT_SELECTOR))
+    const entries = queryHighlightNodes(root)
       .map((node, index) => this.entryFromTopic(topic, "highlight:" + topic.id + ":" + index, node.textContent || ""))
       .filter((entry) => entry.text);
 
@@ -264,14 +275,25 @@ export default class RandomHighlights extends Component {
     let queue = (readJSON(QUEUE_KEY) || []).filter((key) => topics.some((topic) => randomKey(topic) === key));
     if (!queue.length) queue = shuffle(topics.map((topic) => randomKey(topic)).filter(Boolean));
 
-    const key = queue.shift();
-    writeJSON(QUEUE_KEY, queue);
+    while (queue.length) {
+      const key = queue.shift();
+      writeJSON(QUEUE_KEY, queue);
 
-    const topic = topics.find((item) => randomKey(item) === key);
-    if (!topic) return null;
+      const topic = topics.find((item) => randomKey(item) === key);
+      if (!topic) continue;
 
-    const entries = await this.fetchEntriesForTopic(topic);
-    return shuffle(entries)[0] || null;
+      try {
+        const entries = await this.fetchEntriesForTopic(topic);
+        const entry = shuffle(entries)[0];
+        if (entry) return entry;
+      } catch (error) {
+        // A private or deleted topic should not prevent other sources from rendering.
+        // eslint-disable-next-line no-console
+        console.warn("random highlights topic failed", error);
+      }
+    }
+
+    return null;
   }
 
   <template>
