@@ -24,15 +24,54 @@ function parseJson(relativePath) {
   }
 }
 
-function parseTopLevelYamlKeys(relativePath) {
+function parseSettingsYaml(relativePath) {
   const text = read(relativePath);
-  const keys = [];
+  const settings = new Map();
+  let current = null;
+
   for (const line of text.split(/\r?\n/)) {
-    const match = /^([A-Za-z0-9_]+):\s*$/.exec(line);
-    if (match) keys.push(match[1]);
+    if (!line.trim() || line.trim().startsWith("#")) continue;
+
+    const topLevel = /^([A-Za-z0-9_]+):\s*$/.exec(line);
+    if (topLevel) {
+      current = { key: topLevel[1], fields: new Map(), choices: [] };
+      settings.set(current.key, current);
+      continue;
+    }
+
+    if (!current) continue;
+
+    const field = /^\s{2}([A-Za-z0-9_]+):(?:\s*(.*))?$/.exec(line);
+    if (field) {
+      const [, key, rawValue = ""] = field;
+      current.fields.set(key, rawValue.trim());
+      continue;
+    }
+
+    const choice = /^\s{4}-\s*(.+?)\s*$/.exec(line);
+    if (choice && current.fields.has("choices")) {
+      current.choices.push(choice[1]);
+    }
   }
-  if (!keys.length) fail(`${relativePath}: no top-level YAML keys found`);
-  return keys;
+
+  if (!settings.size) fail(`${relativePath}: no top-level settings found`);
+
+  for (const [key, setting] of settings) {
+    if (!setting.fields.has("default")) fail(`${relativePath}: ${key} missing default`);
+    if (!setting.fields.has("description")) fail(`${relativePath}: ${key} missing description`);
+    if (setting.fields.get("type") === "enum" && !setting.choices.length) {
+      fail(`${relativePath}: ${key} enum setting missing choices`);
+    }
+    if (setting.fields.has("min") && setting.fields.has("max")) {
+      const min = Number(setting.fields.get("min"));
+      const max = Number(setting.fields.get("max"));
+      if (!Number.isFinite(min) || !Number.isFinite(max) || min > max) {
+        fail(`${relativePath}: ${key} has invalid min/max`);
+      }
+    }
+  }
+
+  return settings;
 }
 
 function parseLocaleKeys(relativePath) {
@@ -72,8 +111,9 @@ const files = trackedFiles();
 const about = parseJson("about.json");
 const readme = read("README.md");
 const changelog = read("CHANGELOG.md");
-const settings = parseTopLevelYamlKeys("settings.yml");
-const settingSet = new Set(settings);
+const settings = parseSettingsYaml("settings.yml");
+const settingNames = [...settings.keys()];
+const settingSet = new Set(settingNames);
 const localeKeys = parseLocaleKeys("locales/en.yml");
 const gjs = read("javascripts/discourse/connectors/before-topic-list-body/random-highlights.gjs");
 const headTag = read("common/head_tag.html");
@@ -90,7 +130,11 @@ if (about?.about_url && !readme.includes(about.about_url)) {
   fail(`README.md: missing about_url ${about.about_url}`);
 }
 
-for (const setting of settings) {
+if (settings.size !== 18) {
+  fail(`settings.yml: expected 18 public settings, found ${settings.size}`);
+}
+
+for (const setting of settingNames) {
   if (!readme.includes(`\`${setting}\``)) {
     fail(`README.md: missing setting documentation for ${setting}`);
   }
@@ -123,6 +167,20 @@ for (const setting of [
   if (!publicText.includes(setting)) fail(`Public files: missing setting reference ${setting}`);
 }
 
+for (const colorSetting of [
+  "highlight_light_background",
+  "highlight_light_text",
+  "highlight_light_border",
+  "highlight_dark_background",
+  "highlight_dark_text",
+  "highlight_dark_border"
+]) {
+  const defaultValue = settings.get(colorSetting)?.fields.get("default") || "";
+  if (!/^"#[0-9A-Fa-f]{6}"$/.test(defaultValue)) {
+    fail(`settings.yml: ${colorSetting} default should be a quoted 6-digit hex color`);
+  }
+}
+
 if (!gjs.includes('<tbody class="random-highlights-body">')) {
   fail("GJS: before-topic-list-body connector should keep its tbody wrapper unless runtime validation proves otherwise");
 }
@@ -145,4 +203,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Component validation passed (${settings.length} settings, ${files.length} tracked files checked).`);
+console.log(`Component validation passed (${settings.size} settings, ${files.length} tracked files checked).`);
