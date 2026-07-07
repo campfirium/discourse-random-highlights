@@ -1,0 +1,6 @@
+en:
+  js:
+    composer:
+      random_highlight_text: "highlighted text"
+    random_highlights:
+      mark_button_title: "Mark highlight"

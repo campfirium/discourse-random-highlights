@@ -21,8 +21,10 @@
         id: "random-highlight-mark",
         group: "fontStyles",
         icon: "highlighter",
-        title: "Mark highlight",
-        perform: (event) => event.applySurround("<mark>", "</mark>", "highlight")
+        title: "random_highlights.mark_button_title",
+        perform: (event) => event.applySurround("<mark>", "</mark>", "random_highlight_text", {
+          multiline: false
+        })
       });
     });
   }
