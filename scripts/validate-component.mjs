@@ -531,8 +531,11 @@ if (!scss.includes(".random-highlights-body + .topic-list-body")) {
 if (!scss.includes(".random-highlight .title") || !scss.includes("opacity: 0.5")) {
   fail("SCSS: random body text should use the original dimmed title treatment");
 }
-if (!scss.includes(".cooked mark") || !scss.includes(".d-editor-preview mark")) {
-  fail("SCSS: marked text highlight should override Discourse cooked and composer-preview mark styles");
+if (!scss.includes("html .cooked mark") || !scss.includes("html .d-editor-preview mark")) {
+  fail("SCSS: marked text highlight should override Discourse cooked and composer-preview mark styles with WCAG-level specificity");
+}
+if (!scss.includes(".ProseMirror mark")) {
+  fail("SCSS: marked text highlight should also cover Discourse rich-editor mark styles");
 }
 if (!scss.includes("background-color: transparent")) {
   fail("SCSS: marked text highlight should clear Discourse's default mark background color");

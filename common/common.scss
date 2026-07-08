@@ -32,8 +32,9 @@
 }
 
 @if $highlight_light_background != "" or $highlight_light_text != "" or $highlight_light_opacity != "" {
-  .cooked mark,
-  .d-editor-preview mark {
+  html .cooked mark,
+  html .d-editor-preview mark,
+  .ProseMirror mark {
     background: transparent;
     background-color: transparent;
     box-decoration-break: clone;
@@ -61,8 +62,9 @@
 
 @media (prefers-color-scheme: dark) {
   @if $highlight_dark_background != "" or $highlight_dark_text != "" or $highlight_dark_opacity != "" {
-    .cooked mark,
-    .d-editor-preview mark {
+    html .cooked mark,
+    html .d-editor-preview mark,
+    .ProseMirror mark {
       @if $highlight_dark_background != "" and $highlight_dark_opacity != "" {
         background-image: linear-gradient(
           to top,
