@@ -572,6 +572,12 @@ if (!headTag.includes("function booleanSetting")) {
 if (!headTag.includes("COMPOSER_MIN_TRUST_LEVEL")) {
   fail("common/head_tag.html: missing composer trust-level normalization");
 }
+if (headTag.includes("if (currentUserAllowedForComposer() && api.onToolbarCreate)")) {
+  fail("common/head_tag.html: toolbar callback should be registered before user readiness filters are evaluated");
+}
+if (!headTag.includes("condition: currentUserAllowedForComposer")) {
+  fail("common/head_tag.html: composer visibility filters should run as the toolbar button condition");
+}
 if (!gjs.includes("AUTHOR_MIN_TRUST_LEVEL")) {
   fail("GJS: missing author trust-level normalization");
 }

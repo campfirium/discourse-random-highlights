@@ -38,5 +38,6 @@
 - Document and validate escaped-text rendering for source excerpts.
 - Document and validate the MIT license.
 - Validate `about.json` name, author, version format, and field set.
+- Register the composer toolbar hook before evaluating current-user filters so the mark button can appear after user state is ready.
 
 This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.

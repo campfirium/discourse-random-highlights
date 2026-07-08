@@ -32,13 +32,14 @@
     return Number(currentUser.trust_level || 0) >= COMPOSER_MIN_TRUST_LEVEL;
   }
 
-  if (currentUserAllowedForComposer() && api.onToolbarCreate) {
+  if (api.onToolbarCreate) {
     api.onToolbarCreate((toolbar) => {
       toolbar.addButton({
         id: "random-highlight-mark",
         group: "fontStyles",
         icon: "pencil",
         title: "random_highlights.mark_button_title",
+        condition: currentUserAllowedForComposer,
         perform: (event) => event.applySurround("<mark>", "</mark>", "random_highlight_text", {
           multiline: false
         })
