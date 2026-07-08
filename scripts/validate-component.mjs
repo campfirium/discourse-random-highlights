@@ -531,17 +531,20 @@ if (!scss.includes(".random-highlights-body + .topic-list-body")) {
 if (!scss.includes(".random-highlight .title") || !scss.includes("opacity: 0.5")) {
   fail("SCSS: random body text should use the original dimmed title treatment");
 }
-if (!scss.includes("mark::before")) {
-  fail("SCSS: marked text highlight should use a background pseudo-element");
-}
 if (!scss.includes(".cooked mark") || !scss.includes(".d-editor-preview mark")) {
   fail("SCSS: marked text highlight should override Discourse cooked and composer-preview mark styles");
 }
 if (!scss.includes("background-color: transparent")) {
   fail("SCSS: marked text highlight should clear Discourse's default mark background color");
 }
-if (!scss.includes("height: 0.46em")) {
-  fail("SCSS: marked text highlight should use a partial-height reader-style background");
+if (!scss.includes("background-image: linear-gradient")) {
+  fail("SCSS: marked text highlight should use a stable inline background gradient");
+}
+if (!scss.includes("box-decoration-break: clone")) {
+  fail("SCSS: marked text highlight should clone background styling across wrapped lines");
+}
+if (!scss.includes("color-mix(in srgb")) {
+  fail("SCSS: marked text highlight should apply configured opacity without element-level opacity");
 }
 if (!scss.includes('@if $highlight_light_background != ""')) {
   fail("SCSS: mark background settings should be optional");
