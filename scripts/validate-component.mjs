@@ -326,9 +326,10 @@ if (!readme.includes("SECURITY.md")) fail("README.md: missing SECURITY.md refere
 if (!readme.includes("[MIT License](LICENSE)")) fail("README.md: missing MIT License link");
 if (!readme.includes("docs/release-checklist.md")) fail("README.md: missing release checklist link");
 for (const requiredReadmeText of [
-  "## Configuration",
-  "Create public source topics",
-  "`short_topic_tag` and `excerpt_topic_tag` to the same tag",
+  "## Quick Setup",
+  "Use short-topic mode",
+  "Use excerpt mode",
+  "set `short_topic_tag` and `excerpt_topic_tag` to the same topic tag",
   "composer preview",
   "same topic"
 ]) {
