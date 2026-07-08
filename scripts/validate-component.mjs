@@ -534,6 +534,12 @@ if (!scss.includes(".random-highlight .title") || !scss.includes("opacity: 0.5")
 if (!scss.includes("mark::before")) {
   fail("SCSS: marked text highlight should use a background pseudo-element");
 }
+if (!scss.includes(".cooked mark") || !scss.includes(".d-editor-preview mark")) {
+  fail("SCSS: marked text highlight should override Discourse cooked and composer-preview mark styles");
+}
+if (!scss.includes("background-color: transparent")) {
+  fail("SCSS: marked text highlight should clear Discourse's default mark background color");
+}
 if (!scss.includes("height: 0.46em")) {
   fail("SCSS: marked text highlight should use a partial-height reader-style background");
 }
