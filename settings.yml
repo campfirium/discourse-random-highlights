@@ -54,7 +54,7 @@ highlight_dark_text:
   default: "var(--primary)"
   description: "Text color for marked highlight text in dark color schemes."
 highlight_dark_opacity:
-  default: 0.42
+  default: 0.34
   min: 0
   max: 1
   description: "Background opacity for marked highlight text in dark color schemes."

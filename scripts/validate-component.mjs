@@ -467,7 +467,7 @@ for (const [settingName, expectedDefault] of [
   ["highlight_light_opacity", "0.28"],
   ["highlight_dark_background", '"#ead25a"'],
   ["highlight_dark_text", '"var(--primary)"'],
-  ["highlight_dark_opacity", "0.42"]
+  ["highlight_dark_opacity", "0.34"]
 ]) {
   const defaultValue = settings.get(settingName)?.fields.get("default") || "";
   if (defaultValue !== expectedDefault) {
@@ -543,8 +543,8 @@ if (!scss.includes("background-color: transparent !important")) {
 if (!scss.includes("background-image: linear-gradient") || !scss.includes(") !important")) {
   fail("SCSS: marked text highlight should force a stable inline background gradient");
 }
-if (!scss.includes("0 78%") || !scss.includes("78% 100%")) {
-  fail("SCSS: marked text highlight should cover the full marked text with a stronger lower band");
+if (!scss.includes("0 90%") || !scss.includes("90% 100%")) {
+  fail("SCSS: marked text highlight should use a full soft fill plus a thin lower outside band");
 }
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");
