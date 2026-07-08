@@ -19,7 +19,7 @@ topic_cache_minutes:
   description: "How long to cache the tagged topic lists in the browser."
 show_composer_button:
   default: true
-  description: "Add a composer toolbar button that wraps selected text with <mark>."
+  description: "Add a composer toolbar button that marks selected text as a highlight."
 composer_allowed_user_ids:
   default: ""
   description: "Optional comma-separated user IDs that can see the composer button. Empty means everyone. This is UI filtering, not security."

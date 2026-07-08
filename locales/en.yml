@@ -7,7 +7,7 @@ en:
       highlight_selector: "CSS selector used to extract marked excerpts from the first post cooked HTML."
       max_excerpt_length: "Maximum characters displayed for each highlight."
       topic_cache_minutes: "How long to cache tagged topic lists and the last resolved random item in the browser."
-      show_composer_button: "Add a composer toolbar button that wraps selected text with <mark>."
+      show_composer_button: "Add a composer toolbar button that marks selected text as a highlight."
       composer_allowed_user_ids: "Optional comma-separated user IDs that can see the composer button. Empty means everyone. This is UI filtering, not security."
       composer_min_trust_level: "Minimum trust level required to see the composer button."
       allowed_author_user_ids: "Optional comma-separated author user IDs whose topics can appear. Empty means all authors."
