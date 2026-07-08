@@ -543,13 +543,13 @@ if (!scss.includes("background-color: transparent !important")) {
 if (!scss.includes("background-image: linear-gradient") || !scss.includes(") !important")) {
   fail("SCSS: marked text highlight should force a stable inline background gradient");
 }
-if (!scss.includes("0 90%") || !scss.includes("90% 100%")) {
+if (!scss.includes("calc(100% - 0.06em)") || !scss.includes("padding: 0 0.06em 0.08em")) {
   fail("SCSS: marked text highlight should use a full soft fill plus a thin lower outside band");
 }
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");
 }
-if (!scss.includes("color-mix(in srgb, #{$highlight_light_background} 10%") || !scss.includes("color-mix(in srgb, #{$highlight_dark_background} 8%")) {
+if (!scss.includes("#{$highlight_light_opacity * 65%}") || !scss.includes("#{$highlight_dark_opacity * 55%}")) {
   fail("SCSS: marked text highlight should use browser-supported color mixing for soft fill");
 }
 if (!scss.includes('@if $highlight_light_background != ""')) {
