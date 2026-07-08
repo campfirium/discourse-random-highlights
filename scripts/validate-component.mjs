@@ -48,6 +48,7 @@ const EXPECTED_TRACKED_FILES = [
   "javascripts/discourse/api-initializers/random-highlight-mark.gjs",
   "javascripts/discourse/connectors/before-topic-list-body/random-highlights.gjs",
   "locales/en.yml",
+  "locales/zh_CN.yml",
   "scripts/validate-component.mjs",
   "settings.yml"
 ];
@@ -213,6 +214,7 @@ const settings = parseSettingsYaml("settings.yml");
 const settingNames = [...settings.keys()];
 const settingSet = new Set(settingNames);
 const localeKeys = parseLocaleKeys("locales/en.yml");
+const zhLocaleKeys = parseLocaleKeys("locales/zh_CN.yml");
 const gjs = read("javascripts/discourse/connectors/before-topic-list-body/random-highlights.gjs");
 const markInitializer = read("javascripts/discourse/api-initializers/random-highlight-mark.gjs");
 const scss = read("common/common.scss");
@@ -435,22 +437,33 @@ const composerExampleKeys = [...componentText.matchAll(/applySurround\([^)]*["']
 );
 for (const key of [...titleKeys, ...composerExampleKeys]) {
   if (!localeKeys.has(key)) fail(`locales/en.yml: missing locale key ${key}`);
+  const zhKey = key.replace(/^en\./, "zh_CN.");
+  if (!zhLocaleKeys.has(zhKey)) fail(`locales/zh_CN.yml: missing locale key ${zhKey}`);
 }
 
 if (!localeKeys.has("en.theme_metadata.description")) {
   fail("locales/en.yml: missing theme_metadata.description");
 }
+if (!zhLocaleKeys.has("zh_CN.theme_metadata.description")) {
+  fail("locales/zh_CN.yml: missing theme_metadata.description");
+}
 for (const setting of settingNames) {
   const key = `en.theme_metadata.settings.${setting}`;
   if (!localeKeys.has(key)) fail(`locales/en.yml: missing locale key ${key}`);
+  const zhKey = key.replace(/^en\./, "zh_CN.");
+  if (!zhLocaleKeys.has(zhKey)) fail(`locales/zh_CN.yml: missing locale key ${zhKey}`);
 }
 for (const [settingName, setting] of settings) {
   if (setting.fields.get("type") !== "enum") continue;
   const descriptionKey = `en.theme_metadata.settings.${settingName}.description`;
   if (!localeKeys.has(descriptionKey)) fail(`locales/en.yml: missing locale key ${descriptionKey}`);
+  const zhDescriptionKey = descriptionKey.replace(/^en\./, "zh_CN.");
+  if (!zhLocaleKeys.has(zhDescriptionKey)) fail(`locales/zh_CN.yml: missing locale key ${zhDescriptionKey}`);
   for (const choice of setting.choices) {
     const key = `en.theme_metadata.settings.${settingName}.choices.${choice}`;
     if (!localeKeys.has(key)) fail(`locales/en.yml: missing locale key ${key}`);
+    const zhKey = key.replace(/^en\./, "zh_CN.");
+    if (!zhLocaleKeys.has(zhKey)) fail(`locales/zh_CN.yml: missing locale key ${zhKey}`);
   }
 }
 

@@ -1,0 +1,30 @@
+zh_CN:
+  theme_metadata:
+    description: "从带标签的短帖或标记摘录中，在主题列表上方显示一条随机高亮。"
+    settings:
+      short_topic_tag: "短帖标签。第一篇帖子会作为完整随机高亮。留空则禁用短帖来源。"
+      excerpt_topic_tag: "长帖标签。第一篇帖子中的标记摘录会作为随机高亮。留空则禁用摘录来源。"
+      highlight_selector: "用于从第一篇帖子的 cooked HTML 中提取标记摘录的 CSS 选择器。"
+      max_excerpt_length: "每条高亮显示的最大字符数。"
+      topic_cache_minutes: "在浏览器中缓存带标签主题列表和最近解析出的随机条目的时长。"
+      show_composer_button: "在编辑器工具栏添加一个按钮，用于把选中文本包裹为 <mark>。"
+      composer_allowed_user_ids: "可看到编辑器按钮的用户 ID，多个 ID 用英文逗号分隔。留空表示所有人。这只是界面过滤，不是安全边界。"
+      composer_min_trust_level: "看到编辑器按钮所需的最低信任等级。"
+      allowed_author_user_ids: "可出现在随机池中的作者用户 ID，多个 ID 用英文逗号分隔。留空表示所有作者。"
+      allowed_author_min_trust_level: "第一篇帖子作者进入随机池所需的最低信任等级。"
+      highlight_light_background: "浅色配色中标记高亮文本的背景色。"
+      highlight_light_text: "浅色配色中标记高亮文本的文字颜色。"
+      highlight_light_opacity: "浅色配色中标记高亮文本的背景不透明度。"
+      highlight_dark_background: "深色配色中标记高亮文本的背景色。"
+      highlight_dark_text: "深色配色中标记高亮文本的文字颜色。"
+      highlight_dark_opacity: "深色配色中标记高亮文本的背景不透明度。"
+      random_item_author_mode:
+        description: "选择显示来源主题作者，或隐藏作者头像和用户卡片展示。"
+        choices:
+          original_author: "原作者"
+          system: "中性/系统展示"
+  js:
+    composer:
+      random_highlight_text: "高亮文字"
+    random_highlights:
+      mark_button_title: "标记高亮"
