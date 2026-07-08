@@ -414,8 +414,7 @@ export default class RandomHighlights extends Component {
             </span>
             {{#if this.displayTitle}}
               <div class="link-bottom-line random-highlight-source">
-                <span class="random-highlight-prefix" aria-hidden="true">✨</span>
-                <a href={{this.entry.href}} class="raw-link">{{this.displayTitle}}</a>
+                <span class="random-highlight-prefix" aria-hidden="true">✨</span><a href={{this.entry.href}} class="raw-link">{{this.displayTitle}}</a>
               </div>
             {{/if}}
           </td>

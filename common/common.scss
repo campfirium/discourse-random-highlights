@@ -12,10 +12,12 @@
 }
 
 .random-highlight .random-highlight-source {
-  display: block;
-  margin-top: 0.5em;
+  display: flex;
+  align-items: baseline;
+  margin-top: 0.35em;
   color: inherit;
-  line-height: 1.25;
+  font-size: var(--font-down-1);
+  line-height: 1.2;
   opacity: 0.68;
 }
 
@@ -24,12 +26,13 @@
 }
 
 .random-highlight .random-highlight-prefix {
-  margin-right: 0.25em;
+  flex: 0 0 auto;
+  margin-right: 0.12em;
 }
 
 @media screen and (max-width: 1024px) {
   .random-highlight .random-highlight-source {
-    font-size: var(--font-down-1);
+    margin-top: 0.3em;
   }
 }
 

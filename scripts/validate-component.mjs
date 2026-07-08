@@ -517,6 +517,12 @@ if (!gjs.includes("{{this.displayTitle}}")) {
 if (!scss.includes("opacity: 0.68")) {
   fail("SCSS: source topic title line should be semi-transparent");
 }
+if (!scss.includes("font-size: var(--font-down-1)")) {
+  fail("SCSS: source topic title line should use Discourse's smaller metadata scale");
+}
+if (!scss.includes("margin-right: 0.12em")) {
+  fail("SCSS: sparkle prefix should stay visually close to the source title");
+}
 if (!scss.includes("border-bottom: 1px solid var(--primary-low)")) {
   fail("SCSS: random row should keep a topic-list-like bottom divider");
 }
