@@ -83,5 +83,5 @@ Before tagging:
 
 - Save screenshots for desktop light, desktop dark, mobile, composer toolbar, settings page, native style mode, and system author mode.
 - Decide whether the oldest validated Discourse version should be recorded in `about.json` as `minimum_discourse_version`.
-- Tag `v0.1.0` only after install, update, rendering, composer, styling, and source-mode checks pass.
+- Tag `v0.7.0` only after install, update, rendering, composer, styling, and source-mode checks pass.
 - If any runtime item fails, fix the component or narrow the documented compatibility range before tagging.

@@ -11,7 +11,7 @@ Clicking a highlight opens the source topic. On desktop, the component reuses to
 
 ## Release Status
 
-`main` is installable for validation, but `v0.1.0` is not tagged yet. Before using this component on a production theme, validate install, Git update, topic-list rendering, composer behavior, and styling on a non-production Discourse theme.
+`main` is installable for validation, but `v0.7.0` is not tagged yet. Before using this component on a production theme, validate install, Git update, topic-list rendering, composer behavior, and styling on a non-production Discourse theme.
 
 ## Installation
 

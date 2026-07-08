@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 - Unreleased
+## 0.7.0 - Unreleased
 
 - Initial Discourse theme component structure.
 - Add configurable short-topic and marked-excerpt source modes.
@@ -42,4 +42,4 @@
 - Register the composer toolbar hook before evaluating current-user filters so the mark button can appear after user state is ready.
 - Move the composer toolbar button into a Discourse theme API initializer instead of a `head_tag` script.
 
-This version is not tagged yet. Tag `v0.1.0` after real Discourse install/update validation passes.
+This version is not tagged yet. Tag `v0.7.0` after real Discourse install/update validation passes.

@@ -268,7 +268,7 @@ if (versionIsUnreleased) {
   }
   for (const requiredReadmeReleaseStatus of [
     "## Release Status",
-    "`v0.1.0` is not tagged yet",
+    "`v0.7.0` is not tagged yet",
     "install, Git update, topic-list rendering, composer behavior, and styling",
     "non-production Discourse theme"
   ]) {
@@ -397,7 +397,7 @@ for (const requiredReleaseGate of [
   "Rendering",
   "Composer",
   "Styling",
-  "Tag `v0.1.0`"
+  "Tag `v0.7.0`"
 ]) {
   if (!releaseChecklist.includes(requiredReleaseGate)) {
     fail(`docs/release-checklist.md: missing release gate ${requiredReleaseGate}`);
