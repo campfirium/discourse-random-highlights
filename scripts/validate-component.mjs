@@ -558,11 +558,13 @@ if (!scss.includes('@if $highlight_light_background != ""')) {
 if (scss.includes("border:") || scss.includes("box-shadow:")) {
   fail("SCSS: marked text highlight should not use borders or row-style shadows");
 }
-if (!headTag.includes('icon: "pencil-alt"')) {
-  fail('common/head_tag.html: expected composer toolbar icon "pencil-alt"');
+if (!headTag.includes('icon: "pencil"')) {
+  fail('common/head_tag.html: expected composer toolbar icon "pencil"');
 }
-if (headTag.includes('icon: "highlighter"')) {
-  fail('common/head_tag.html: avoid unproven "highlighter" icon');
+for (const unprovenIcon of ["highlighter", "pencil-alt"]) {
+  if (headTag.includes(`icon: "${unprovenIcon}"`)) {
+    fail(`common/head_tag.html: avoid unproven "${unprovenIcon}" icon`);
+  }
 }
 if (!headTag.includes("function booleanSetting")) {
   fail("common/head_tag.html: missing composer boolean setting normalization");

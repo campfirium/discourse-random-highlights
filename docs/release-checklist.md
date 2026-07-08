@@ -62,7 +62,7 @@ Check with a logged-in test user.
 - `show_composer_button: false` hides the toolbar button.
 - Non-matching `composer_allowed_user_ids` hides the button.
 - `composer_min_trust_level` hides the button below the configured trust level.
-- The `pencil-alt` toolbar icon renders on the target Discourse version.
+- The `pencil` toolbar icon renders on the target Discourse version.
 - Selected inline text becomes `<mark>selected text</mark>`.
 - Empty selection inserts the localized example text.
 - Repeating the action around an existing mark does not create nested marks.
