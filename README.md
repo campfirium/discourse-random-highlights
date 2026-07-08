@@ -7,7 +7,7 @@ It supports two source modes:
 - Short-topic mode: tag a short topic and show the first post as a random highlight.
 - Excerpt mode: tag a longer topic and mark parts of the first post with `<mark>...</mark>`; each marked excerpt can appear as a random highlight.
 
-Clicking a highlight opens the source topic. On desktop, the component reuses topic metadata from Discourse tag JSON for the poster avatar, post count, view count, and activity time. The display row keeps Discourse's normal topic-list styling and adds a subtle `✨` excerpt line under the source topic title.
+Clicking a highlight opens the source topic. On desktop, the component reuses topic metadata from Discourse tag JSON for the poster avatar, post count, view count, and activity time. The display row keeps the topic-list separators and shows the random body text first, followed by a semi-transparent `✨` source topic title line.
 
 ## Release Status
 

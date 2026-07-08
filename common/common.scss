@@ -2,13 +2,14 @@
   display: table-row-group;
 }
 
-.random-highlight .random-highlight-excerpt {
+.random-highlight .random-highlight-source {
   margin-top: 0.15em;
   color: var(--primary-medium);
   line-height: 1.25;
+  opacity: 0.68;
 }
 
-.random-highlight .random-highlight-excerpt a {
+.random-highlight .random-highlight-source a {
   color: inherit;
 }
 
@@ -17,7 +18,7 @@
 }
 
 @media screen and (max-width: 1024px) {
-  .random-highlight .random-highlight-excerpt {
+  .random-highlight .random-highlight-source {
     font-size: var(--font-down-1);
   }
 }

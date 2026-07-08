@@ -443,7 +443,7 @@ for (const [settingName, setting] of settings) {
   }
 }
 
-for (const className of ["random-highlight", "random-highlights-body", "random-highlight-excerpt", "random-highlight-prefix"]) {
+for (const className of ["random-highlight", "random-highlights-body", "random-highlight-source", "random-highlight-prefix"]) {
   if (!gjs.includes(className)) fail(`GJS: missing class ${className}`);
   if (!scss.includes(className)) fail(`SCSS: missing class ${className}`);
 }
@@ -506,7 +506,16 @@ if (!gjs.includes("readCachedEntry()")) {
   fail("GJS: missing synchronous cached-entry display path");
 }
 if (!gjs.includes(">✨</span>")) {
-  fail("GJS: missing subtle sparkle prefix for excerpt line");
+  fail("GJS: missing sparkle prefix for source topic title line");
+}
+if (!gjs.includes("{{this.displayExcerpt}}")) {
+  fail("GJS: random body text should render as the primary row text");
+}
+if (!gjs.includes("{{this.displayTitle}}")) {
+  fail("GJS: source topic title should render as secondary row text");
+}
+if (!scss.includes("opacity: 0.68")) {
+  fail("SCSS: source topic title line should be semi-transparent");
 }
 if (!scss.includes("mark::before")) {
   fail("SCSS: marked text highlight should use a background pseudo-element");

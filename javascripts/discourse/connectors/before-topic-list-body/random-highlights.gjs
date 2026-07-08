@@ -409,13 +409,13 @@ export default class RandomHighlights extends Component {
           <td class="main-link clearfix topic-list-data" colspan="1">
             <span class="link-top-line" role="heading" aria-level="2">
               <a href={{this.entry.href}} class="title raw-link raw-topic-link">
-                {{this.displayTitle}}
+                {{this.displayExcerpt}}
               </a>
             </span>
-            {{#if this.displayExcerpt}}
-              <div class="link-bottom-line random-highlight-excerpt">
+            {{#if this.displayTitle}}
+              <div class="link-bottom-line random-highlight-source">
                 <span class="random-highlight-prefix" aria-hidden="true">✨</span>
-                <a href={{this.entry.href}} class="raw-link">{{this.displayExcerpt}}</a>
+                <a href={{this.entry.href}} class="raw-link">{{this.displayTitle}}</a>
               </div>
             {{/if}}
           </td>
@@ -443,4 +443,3 @@ export default class RandomHighlights extends Component {
     {{/if}}
   </template>
 }
-
