@@ -20,7 +20,15 @@ const SUPPORTED_THEME_SETTING_TYPES = new Set([
 const EXPECTED_REPOSITORY_URL = "https://github.com/campfirium/discourse-random-highlights";
 const EXPECTED_LICENSE_URL = `${EXPECTED_REPOSITORY_URL}/blob/main/LICENSE`;
 const EXPECTED_ISSUES_URL = `${EXPECTED_REPOSITORY_URL}/issues`;
-const EXPECTED_ABOUT_KEYS = new Set(["name", "component", "license_url", "about_url", "authors", "theme_version"]);
+const EXPECTED_ABOUT_KEYS = new Set([
+  "name",
+  "component",
+  "license_url",
+  "about_url",
+  "authors",
+  "theme_version",
+  "modifiers"
+]);
 const SITE_SPECIFIC_TAG_NAMES = ["twig", "twigs"];
 const EXPECTED_TRACKED_FILES = [
   ".editorconfig",
@@ -230,6 +238,9 @@ if (about?.about_url !== EXPECTED_REPOSITORY_URL) {
 }
 if (about?.license_url !== EXPECTED_LICENSE_URL) {
   fail(`about.json: expected license_url ${EXPECTED_LICENSE_URL}`);
+}
+if (!Array.isArray(about?.modifiers?.svg_icons) || !about.modifiers.svg_icons.includes("highlighter")) {
+  fail('about.json: expected modifiers.svg_icons to include "highlighter" for the composer toolbar button');
 }
 if (!license.startsWith("MIT License")) {
   fail("LICENSE: expected MIT License");
@@ -558,13 +569,16 @@ if (!scss.includes('@if $highlight_light_background != ""')) {
 if (scss.includes("border:") || scss.includes("box-shadow:")) {
   fail("SCSS: marked text highlight should not use borders or row-style shadows");
 }
-if (!markInitializer.includes('icon: "pencil"')) {
-  fail('composer initializer: expected composer toolbar icon "pencil"');
+if (!markInitializer.includes('icon: "highlighter"')) {
+  fail('composer initializer: expected composer toolbar icon "highlighter"');
 }
-for (const unprovenIcon of ["highlighter", "pencil-alt"]) {
+for (const unprovenIcon of ["pencil-alt"]) {
   if (markInitializer.includes(`icon: "${unprovenIcon}"`)) {
     fail(`composer initializer: avoid unproven "${unprovenIcon}" icon`);
   }
+}
+if (markInitializer.includes('icon: "pencil"')) {
+  fail('composer initializer: use the registered "highlighter" icon instead of the generic pencil icon');
 }
 if (!markInitializer.includes('import { apiInitializer } from "discourse/lib/api"')) {
   fail("composer initializer: missing Discourse apiInitializer import");

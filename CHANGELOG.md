@@ -11,7 +11,7 @@
 - Add original-author and neutral/system presentation modes.
 - Clamp numeric settings in the component runtime to protect against invalid admin-entered values.
 - Preserve and enrich author metadata from topic payloads, and encode profile links.
-- Use a safer composer toolbar icon with Discourse source evidence.
+- Register and use a highlighter composer toolbar icon through Discourse theme metadata.
 - Update installation instructions for the current Discourse Themes & components admin UI.
 - Add localized theme metadata and setting descriptions for the Discourse admin UI.
 - Add a GitHub bug report template and support instructions.

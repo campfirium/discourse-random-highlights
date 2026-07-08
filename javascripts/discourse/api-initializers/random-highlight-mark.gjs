@@ -38,7 +38,7 @@ export default apiInitializer((api) => {
     toolbar.addButton({
       id: "random-highlight-mark",
       group: "fontStyles",
-      icon: "pencil",
+      icon: "highlighter",
       title: "random_highlights.mark_button_title",
       condition: currentUserAllowedForComposer,
       perform: (event) =>
