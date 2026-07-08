@@ -169,9 +169,11 @@ function relativeDateLabel(value) {
   if (hours < 24) return hours + "h";
   const days = Math.floor(hours / 24);
   if (days < 30) return days + "d";
-  const months = Math.floor(days / 30);
-  if (months < 12) return months + "mo";
-  return Math.floor(months / 12) + "y";
+
+  const date = new Date(time);
+  const year = String(date.getFullYear()).slice(-2);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  return `${year}/${month}`;
 }
 
 function getCachedTopics() {

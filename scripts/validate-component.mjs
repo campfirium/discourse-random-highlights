@@ -556,6 +556,12 @@ if (!gjs.includes("AUTHOR_MIN_TRUST_LEVEL")) {
 if (!gjs.includes("RANDOM_ITEM_AUTHOR_MODE")) {
   fail("GJS: missing random item author mode normalization");
 }
+if (!gjs.includes('return `${year}/${month}`')) {
+  fail("GJS: old activity dates should use Discourse-like short date labels");
+}
+if (gjs.includes('return Math.floor(months / 12) + "y"') || gjs.includes('return months + "mo"')) {
+  fail("GJS: activity labels should not use custom mo/y formatting");
+}
 if (!gjs.includes('String(settings.short_topic_tag || "").trim()')) {
   fail("GJS: source tags should be trimmed before cache/signature use");
 }
