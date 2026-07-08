@@ -1,10 +1,10 @@
-.random-highlights-body {
-  display: table-row-group;
-}
-
 .random-highlight .title {
   display: block;
   opacity: 0.5;
+}
+
+.random-highlights-body + .topic-list-body {
+  border-top: 0;
 }
 
 .random-highlight .random-highlight-source {

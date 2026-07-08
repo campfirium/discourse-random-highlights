@@ -158,24 +158,6 @@ function formatCount(value) {
   return String(number);
 }
 
-function relativeDateLabel(value) {
-  const time = Date.parse(value || "");
-  if (!Number.isFinite(time)) return "";
-  const seconds = Math.max(0, Math.floor((Date.now() - time) / 1000));
-  if (seconds < 60) return "now";
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return minutes + "m";
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return hours + "h";
-  const days = Math.floor(hours / 24);
-  if (days < 30) return days + "d";
-
-  const date = new Date(time);
-  const year = String(date.getFullYear()).slice(-2);
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  return `${year}/${month}`;
-}
-
 function getCachedTopics() {
   const cache = window._randomHighlightsTopicCache;
   if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !Array.isArray(cache.topics)) return null;
@@ -381,16 +363,9 @@ export default class RandomHighlights extends Component {
     return formatCount(this.entry?.topic?.views || 0);
   }
 
-  get activityLabel() {
+  get activityDate() {
     const topic = this.entry?.topic || {};
-    return relativeDateLabel(topic.bumped_at || topic.last_posted_at || topic.created_at);
-  }
-
-  get activityTime() {
-    const topic = this.entry?.topic || {};
-    const value = topic.bumped_at || topic.last_posted_at || topic.created_at;
-    const time = Date.parse(value || "");
-    return Number.isFinite(time) ? time : "";
+    return topic.bumped_at || topic.last_posted_at || topic.created_at || "";
   }
 
   async load() {
@@ -435,7 +410,9 @@ export default class RandomHighlights extends Component {
             <td class="num views topic-list-data"><span class="number">{{this.viewCount}}</span></td>
             <td class="activity num topic-list-data age">
               <a href={{this.entry.href}} class="post-activity">
-                <span class="relative-date" data-time={{this.activityTime}} data-format="tiny">{{this.activityLabel}}</span>
+                <span class="relative-date" data-time={{this.activityDate}} data-format="tiny">
+                  {{format-date this.activityDate format="tiny" noTitle="true"}}
+                </span>
               </a>
             </td>
           {{/if}}
