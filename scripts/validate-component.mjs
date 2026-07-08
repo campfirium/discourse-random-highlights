@@ -549,8 +549,8 @@ if (!scss.includes("0 90%") || !scss.includes("90% 100%")) {
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");
 }
-if (!scss.includes("rgb(from #{$highlight_light_background}") || !scss.includes("rgb(from #{$highlight_dark_background}")) {
-  fail("SCSS: marked text highlight should apply configured opacity without Sass arithmetic or element-level opacity");
+if (!scss.includes("color-mix(in srgb, #{$highlight_light_background} 10%") || !scss.includes("color-mix(in srgb, #{$highlight_dark_background} 8%")) {
+  fail("SCSS: marked text highlight should use browser-supported color mixing for soft fill");
 }
 if (!scss.includes('@if $highlight_light_background != ""')) {
   fail("SCSS: mark background settings should be optional");

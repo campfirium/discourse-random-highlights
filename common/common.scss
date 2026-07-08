@@ -42,8 +42,8 @@
     @if $highlight_light_background != "" and $highlight_light_opacity != "" {
       background-image: linear-gradient(
         to bottom,
-        rgb(from #{$highlight_light_background} r g b / calc(#{$highlight_light_opacity} * 0.28)) 0 90%,
-        rgb(from #{$highlight_light_background} r g b / calc(#{$highlight_light_opacity} * 0.68)) 90% 100%
+        color-mix(in srgb, #{$highlight_light_background} 10%, transparent) 0 90%,
+        color-mix(in srgb, #{$highlight_light_background} 22%, transparent) 90% 100%
       ) !important;
     } @else if $highlight_light_background != "" {
       background-image: linear-gradient(
@@ -66,8 +66,8 @@
       @if $highlight_dark_background != "" and $highlight_dark_opacity != "" {
         background-image: linear-gradient(
           to bottom,
-          rgb(from #{$highlight_dark_background} r g b / calc(#{$highlight_dark_opacity} * 0.24)) 0 90%,
-          rgb(from #{$highlight_dark_background} r g b / calc(#{$highlight_dark_opacity} * 0.58)) 90% 100%
+          color-mix(in srgb, #{$highlight_dark_background} 8%, transparent) 0 90%,
+          color-mix(in srgb, #{$highlight_dark_background} 18%, transparent) 90% 100%
         ) !important;
       } @else if $highlight_dark_background != "" {
         background-image: linear-gradient(
