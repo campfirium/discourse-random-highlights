@@ -393,8 +393,8 @@ for (const requiredReleaseGate of [
   }
 }
 
-if (settings.size !== 11) {
-  fail(`settings.yml: expected 11 public settings, found ${settings.size}`);
+if (settings.size !== 15) {
+  fail(`settings.yml: expected 15 public settings, found ${settings.size}`);
 }
 for (const sourceTagSetting of ["short_topic_tag", "excerpt_topic_tag"]) {
   if (settings.get(sourceTagSetting)?.fields.get("default") !== '""') {
@@ -450,9 +450,31 @@ for (const className of ["random-highlight", "random-highlights-body", "random-h
 
 for (const setting of [
   "random_item_author_mode",
-  "topic_cache_minutes"
+  "topic_cache_minutes",
+  "highlight_light_background",
+  "highlight_light_opacity",
+  "highlight_dark_background",
+  "highlight_dark_opacity"
 ]) {
   if (!publicText.includes(setting)) fail(`Public files: missing setting reference ${setting}`);
+}
+
+for (const colorSetting of ["highlight_light_background", "highlight_dark_background"]) {
+  const defaultValue = settings.get(colorSetting)?.fields.get("default") || "";
+  if (!/^"#[0-9A-Fa-f]{6}"$/.test(defaultValue)) {
+    fail(`settings.yml: ${colorSetting} default should be a quoted 6-digit hex color`);
+  }
+}
+
+for (const opacitySetting of ["highlight_light_opacity", "highlight_dark_opacity"]) {
+  const setting = settings.get(opacitySetting);
+  const defaultValue = Number(setting?.fields.get("default"));
+  if (!Number.isFinite(defaultValue) || defaultValue < 0 || defaultValue > 1) {
+    fail(`settings.yml: ${opacitySetting} default should be between 0 and 1`);
+  }
+  if (setting?.fields.get("min") !== "0" || setting?.fields.get("max") !== "1") {
+    fail(`settings.yml: ${opacitySetting} should use min 0 and max 1`);
+  }
 }
 
 if (!gjs.includes('<tbody class="random-highlights-body">')) {
@@ -466,6 +488,12 @@ if (!gjs.includes("preloadedEntryPromise()")) {
 }
 if (!gjs.includes(">✨</span>")) {
   fail("GJS: missing subtle sparkle prefix for excerpt line");
+}
+if (!scss.includes("mark::before")) {
+  fail("SCSS: marked text highlight should use a background pseudo-element");
+}
+if (scss.includes("border:") || scss.includes("box-shadow:")) {
+  fail("SCSS: marked text highlight should not use borders or row-style shadows");
 }
 if (!headTag.includes('icon: "pencil-alt"')) {
   fail('common/head_tag.html: expected composer toolbar icon "pencil-alt"');

@@ -50,7 +50,7 @@ Marked excerpts are rendered as escaped text. The component parses cooked post H
 
 The author and composer allowlist settings are client-side filtering for presentation and workflow control. They are not a security boundary.
 
-The browser preloads the next random item as the component script loads. It keeps only short-lived display state in memory and `sessionStorage` so the random queue can rotate through source topics without immediately repeating the same topic.
+The browser preloads the next random item as the component script loads. It caches tagged topic lists for `topic_cache_minutes` and keeps only short-lived display state in memory and `sessionStorage` so the random queue can rotate through source topics without immediately repeating the same topic.
 
 ## Support
 
@@ -78,12 +78,14 @@ It checks component metadata, setting references, README coverage, locale keys, 
 - `excerpt_topic_tag`: tag used for long-form source topics. Each `<mark>` excerpt in the first post is used as one random item. Leave empty to disable this source mode.
 - `highlight_selector`: selector used to extract marked excerpts. Defaults to `mark`.
 - `max_excerpt_length`: maximum displayed text length.
-- `topic_cache_minutes`: how long tagged topic lists are cached in the browser while the next random item is preloaded.
+- `topic_cache_minutes`: how long tagged topic lists are cached in the browser.
 - `show_composer_button`: adds a composer toolbar button that wraps selected text in `<mark>`.
 - `composer_allowed_user_ids`: optional UI allowlist for the composer button.
 - `composer_min_trust_level`: optional minimum trust level for the composer button.
 - `allowed_author_user_ids`: optional author allowlist for displayed source topics.
 - `allowed_author_min_trust_level`: optional minimum trust level for displayed source topics.
+- `highlight_light_background`, `highlight_light_opacity`: background color and opacity for marked text in light color schemes.
+- `highlight_dark_background`, `highlight_dark_opacity`: background color and opacity for marked text in dark color schemes.
 - `random_item_author_mode`: choose `original_author` to show the source topic author avatar, or `system` to hide author avatar/user-card presentation.
 
 The component does not ship with opinionated default tag names. Sites can choose separate tags for short topics and excerpt topics, or set both settings to the same tag to combine both modes into one pool.

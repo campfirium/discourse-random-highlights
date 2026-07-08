@@ -5,7 +5,7 @@ const SHORT_TOPIC_TAG = String(settings.short_topic_tag || "").trim();
 const EXCERPT_TOPIC_TAG = String(settings.excerpt_topic_tag || "").trim();
 const HIGHLIGHT_SELECTOR = String(settings.highlight_selector || "mark").trim() || "mark";
 const MAX_EXCERPT_LENGTH = numberSetting(settings.max_excerpt_length, 220, 40, 1000);
-const CACHE_MS = numberSetting(settings.topic_cache_minutes, 15, 1, 60) * 60 * 1000;
+const CACHE_MS = numberSetting(settings.topic_cache_minutes, 5, 1, 60) * 60 * 1000;
 const AUTHOR_MIN_TRUST_LEVEL = numberSetting(settings.allowed_author_min_trust_level, 0, 0, 4);
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
@@ -407,6 +407,5 @@ export default class RandomHighlights extends Component {
     {{/if}}
   </template>
 }
-
 
 
