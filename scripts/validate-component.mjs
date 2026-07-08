@@ -517,6 +517,12 @@ if (!gjs.includes("{{this.displayTitle}}")) {
 if (!scss.includes("opacity: 0.68")) {
   fail("SCSS: source topic title line should be semi-transparent");
 }
+if (!scss.includes("border-bottom: 1px solid var(--primary-low)")) {
+  fail("SCSS: random row should keep a topic-list-like bottom divider");
+}
+if (!scss.includes(".random-highlight .title") || !scss.includes("opacity: 0.5")) {
+  fail("SCSS: random body text should use the original dimmed title treatment");
+}
 if (!scss.includes("mark::before")) {
   fail("SCSS: marked text highlight should use a background pseudo-element");
 }
