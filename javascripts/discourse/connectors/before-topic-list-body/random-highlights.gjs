@@ -5,14 +5,13 @@ const SHORT_TOPIC_TAG = String(settings.short_topic_tag || "").trim();
 const EXCERPT_TOPIC_TAG = String(settings.excerpt_topic_tag || "").trim();
 const HIGHLIGHT_SELECTOR = String(settings.highlight_selector || "mark").trim() || "mark";
 const MAX_EXCERPT_LENGTH = numberSetting(settings.max_excerpt_length, 220, 40, 1000);
-const CACHE_MS = numberSetting(settings.topic_cache_minutes, 5, 1, 60) * 60 * 1000;
+const CACHE_MS = numberSetting(settings.topic_cache_minutes, 15, 1, 60) * 60 * 1000;
 const AUTHOR_MIN_TRUST_LEVEL = numberSetting(settings.allowed_author_min_trust_level, 0, 0, 4);
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
-const HIGHLIGHT_STYLE_MODE = String(settings.highlight_style_mode || "custom").trim();
 const RANDOM_ITEM_AUTHOR_MODE = String(settings.random_item_author_mode || "original_author").trim();
-const USE_CUSTOM_STYLE = HIGHLIGHT_STYLE_MODE !== "native";
 const SHOW_ORIGINAL_AUTHOR = RANDOM_ITEM_AUTHOR_MODE !== "system";
+let PRELOADED_ENTRY_PROMISE = null;
 
 function numberSetting(value, fallback, min, max) {
   const number = Number(value);
@@ -159,6 +158,132 @@ function relativeDateLabel(value) {
   return Math.floor(months / 12) + "y";
 }
 
+function getCachedTopics() {
+  const cache = window._randomHighlightsTopicCache;
+  if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !Array.isArray(cache.topics)) return null;
+  if (Date.now() - cache.fetchedAt > CACHE_MS) return null;
+  return cache.topics;
+}
+
+function setCachedTopics(topics) {
+  window._randomHighlightsTopicCache = { signature: SOURCE_SIGNATURE, fetchedAt: Date.now(), topics };
+}
+
+async function fetchTaggedTopics() {
+  const cached = getCachedTopics();
+  if (cached) return cached;
+
+  const configs = sourceConfigs();
+  const topics = [];
+
+  for (const config of configs) {
+    try {
+      const response = await fetch("/tag/" + encodeURIComponent(config.tag) + ".json", { credentials: "same-origin" });
+      if (!response.ok) continue;
+
+      const payload = await response.json();
+      const usersById = {};
+      (payload.users || []).forEach((user) => {
+        usersById[user.id] = user;
+      });
+
+      ((payload.topic_list && payload.topic_list.topics) || [])
+        .filter((topic) => topic && topic.id && !topic.deleted && !topic.archived)
+        .forEach((topic) => {
+          topics.push(Object.assign({}, topic, {
+            _randomHighlightsUsersById: usersById,
+            _randomHighlightsMode: config.mode,
+            _randomHighlightsKey: config.mode + ":" + topic.id
+          }));
+        });
+    } catch (error) {
+      // One unavailable tag source should not block the other configured source.
+      // eslint-disable-next-line no-console
+      console.warn("random highlights tag failed", error);
+    }
+  }
+
+  setCachedTopics(topics);
+  return topics;
+}
+
+async function fetchEntriesForTopic(topic) {
+  const response = await fetch(topicUrl(topic) + ".json", { credentials: "same-origin" });
+  if (!response.ok) throw new Error("topic request failed: " + response.status);
+
+  const payload = await response.json();
+  const post = firstPost(payload);
+  rememberPostUser(topic, post);
+  if (!post || !authorAllowed(topic, post)) return [];
+  return extractHighlights(topic, post);
+}
+
+function extractHighlights(topic, post) {
+  const root = document.createElement("div");
+  root.innerHTML = post.cooked || "";
+
+  const mode = topic._randomHighlightsMode || "excerpt";
+  const entries = queryHighlightNodes(root)
+    .map((node, index) => entryFromTopic(topic, "highlight:" + topic.id + ":" + index, node.textContent || ""))
+    .filter((entry) => entry.text);
+
+  if (entries.length) return entries;
+  if (mode === "excerpt") return [];
+
+  const fallback = truncateText(htmlToText(post.cooked || topic.excerpt || ""), MAX_EXCERPT_LENGTH);
+  return fallback ? [entryFromTopic(topic, "topic:" + topic.id, fallback)] : [];
+}
+
+function entryFromTopic(topic, id, text) {
+  return {
+    id,
+    href: topicUrl(topic),
+    title: topic.title || topic.fancy_title || "",
+    text: truncateText(text || "", MAX_EXCERPT_LENGTH),
+    topic
+  };
+}
+
+async function fetchNextHighlight() {
+  const topics = await fetchTaggedTopics();
+  const storedQueue = readJSON(QUEUE_KEY);
+  let queue = (Array.isArray(storedQueue) ? storedQueue : []).filter((key) =>
+    topics.some((topic) => randomKey(topic) === key)
+  );
+  if (!queue.length) queue = shuffle(topics.map((topic) => randomKey(topic)).filter(Boolean));
+
+  while (queue.length) {
+    const key = queue.shift();
+    writeJSON(QUEUE_KEY, queue);
+
+    const topic = topics.find((item) => randomKey(item) === key);
+    if (!topic) continue;
+
+    try {
+      const entries = await fetchEntriesForTopic(topic);
+      const entry = shuffle(entries)[0];
+      if (entry) return entry;
+    } catch (error) {
+      // A private or deleted topic should not prevent other sources from rendering.
+      // eslint-disable-next-line no-console
+      console.warn("random highlights topic failed", error);
+    }
+  }
+
+  return null;
+}
+
+function preloadedEntryPromise() {
+  if (!PRELOADED_ENTRY_PROMISE) PRELOADED_ENTRY_PROMISE = fetchNextHighlight();
+  return PRELOADED_ENTRY_PROMISE;
+}
+
+function refreshPreload() {
+  PRELOADED_ENTRY_PROMISE = fetchNextHighlight();
+}
+
+if (sourceConfigs().length) preloadedEntryPromise();
+
 export default class RandomHighlights extends Component {
   @tracked entry = null;
 
@@ -172,7 +297,15 @@ export default class RandomHighlights extends Component {
   }
 
   get rowClass() {
-    return USE_CUSTOM_STYLE ? "random-highlight topic-list-item random-highlight--custom" : "random-highlight topic-list-item";
+    return "random-highlight topic-list-item";
+  }
+
+  get displayTitle() {
+    return this.entry?.title || this.entry?.text || "";
+  }
+
+  get displayExcerpt() {
+    return this.entry?.text || "";
   }
 
   get showAuthor() {
@@ -224,127 +357,13 @@ export default class RandomHighlights extends Component {
 
   async load() {
     try {
-      this.entry = await this.fetchNextHighlight();
+      this.entry = await preloadedEntryPromise();
+      refreshPreload();
     } catch (error) {
       // Keep the topic list usable if the source tag is missing or private.
       // eslint-disable-next-line no-console
       console.warn("random highlights failed", error);
     }
-  }
-
-  getCachedTopics() {
-    const cache = window._randomHighlightsTopicCache;
-    if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !Array.isArray(cache.topics)) return null;
-    if (Date.now() - cache.fetchedAt > CACHE_MS) return null;
-    return cache.topics;
-  }
-
-  setCachedTopics(topics) {
-    window._randomHighlightsTopicCache = { signature: SOURCE_SIGNATURE, fetchedAt: Date.now(), topics };
-  }
-
-  async fetchTaggedTopics() {
-    const cached = this.getCachedTopics();
-    if (cached) return cached;
-
-    const configs = sourceConfigs();
-    const topics = [];
-
-    for (const config of configs) {
-      try {
-        const response = await fetch("/tag/" + encodeURIComponent(config.tag) + ".json", { credentials: "same-origin" });
-        if (!response.ok) continue;
-
-        const payload = await response.json();
-        const usersById = {};
-        (payload.users || []).forEach((user) => {
-          usersById[user.id] = user;
-        });
-
-        ((payload.topic_list && payload.topic_list.topics) || [])
-          .filter((topic) => topic && topic.id && !topic.deleted && !topic.archived)
-          .forEach((topic) => {
-            topics.push(Object.assign({}, topic, {
-              _randomHighlightsUsersById: usersById,
-              _randomHighlightsMode: config.mode,
-              _randomHighlightsKey: config.mode + ":" + topic.id
-            }));
-          });
-      } catch (error) {
-        // One unavailable tag source should not block the other configured source.
-        // eslint-disable-next-line no-console
-        console.warn("random highlights tag failed", error);
-      }
-    }
-
-    this.setCachedTopics(topics);
-    return topics;
-  }
-
-  async fetchEntriesForTopic(topic) {
-    const response = await fetch(topicUrl(topic) + ".json", { credentials: "same-origin" });
-    if (!response.ok) throw new Error("topic request failed: " + response.status);
-
-    const payload = await response.json();
-    const post = firstPost(payload);
-    rememberPostUser(topic, post);
-    if (!post || !authorAllowed(topic, post)) return [];
-    return this.extractHighlights(topic, post);
-  }
-
-  extractHighlights(topic, post) {
-    const root = document.createElement("div");
-    root.innerHTML = post.cooked || "";
-
-    const mode = topic._randomHighlightsMode || "excerpt";
-    const entries = queryHighlightNodes(root)
-      .map((node, index) => this.entryFromTopic(topic, "highlight:" + topic.id + ":" + index, node.textContent || ""))
-      .filter((entry) => entry.text);
-
-    if (entries.length) return entries;
-    if (mode === "excerpt") return [];
-
-    const fallback = truncateText(htmlToText(post.cooked || topic.excerpt || ""), MAX_EXCERPT_LENGTH);
-    return fallback ? [this.entryFromTopic(topic, "topic:" + topic.id, fallback)] : [];
-  }
-
-  entryFromTopic(topic, id, text) {
-    return {
-      id,
-      href: topicUrl(topic),
-      title: topic.title || topic.fancy_title || "",
-      text: truncateText(text || "", MAX_EXCERPT_LENGTH),
-      topic
-    };
-  }
-
-  async fetchNextHighlight() {
-    const topics = await this.fetchTaggedTopics();
-    const storedQueue = readJSON(QUEUE_KEY);
-    let queue = (Array.isArray(storedQueue) ? storedQueue : []).filter((key) =>
-      topics.some((topic) => randomKey(topic) === key)
-    );
-    if (!queue.length) queue = shuffle(topics.map((topic) => randomKey(topic)).filter(Boolean));
-
-    while (queue.length) {
-      const key = queue.shift();
-      writeJSON(QUEUE_KEY, queue);
-
-      const topic = topics.find((item) => randomKey(item) === key);
-      if (!topic) continue;
-
-      try {
-        const entries = await this.fetchEntriesForTopic(topic);
-        const entry = shuffle(entries)[0];
-        if (entry) return entry;
-      } catch (error) {
-        // A private or deleted topic should not prevent other sources from rendering.
-        // eslint-disable-next-line no-console
-        console.warn("random highlights topic failed", error);
-      }
-    }
-
-    return null;
   }
 
   <template>
@@ -354,12 +373,15 @@ export default class RandomHighlights extends Component {
           <td class="main-link clearfix topic-list-data" colspan="1">
             <span class="link-top-line" role="heading" aria-level="2">
               <a href={{this.entry.href}} class="title raw-link raw-topic-link">
-                {{this.entry.text}}
-                {{#if this.entry.title}}
-                  <br><small>{{this.entry.title}}</small>
-                {{/if}}
+                {{this.displayTitle}}
               </a>
             </span>
+            {{#if this.displayExcerpt}}
+              <div class="link-bottom-line random-highlight-excerpt">
+                <span class="random-highlight-prefix" aria-hidden="true">✨</span>
+                <a href={{this.entry.href}} class="raw-link">{{this.displayExcerpt}}</a>
+              </div>
+            {{/if}}
           </td>
 
           {{#if this.isDesktop}}
@@ -385,7 +407,6 @@ export default class RandomHighlights extends Component {
     {{/if}}
   </template>
 }
-
 
 
 

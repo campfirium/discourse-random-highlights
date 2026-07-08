@@ -1,63 +1,23 @@
 .random-highlights-body {
-  --random-highlight-bg: #{$highlight_light_background};
-  --random-highlight-text: #{$highlight_light_text};
-  --random-highlight-border: #{$highlight_light_border};
+  display: table-row-group;
 }
 
-.random-highlight--custom {
-  background: var(--random-highlight-bg);
+.random-highlight .random-highlight-excerpt {
+  margin-top: 0.15em;
+  color: var(--primary-medium);
+  line-height: 1.25;
 }
 
-.random-highlight--custom > td {
-  background: var(--random-highlight-bg);
+.random-highlight .random-highlight-excerpt a {
+  color: inherit;
 }
 
-.random-highlight--custom > td:first-child {
-  box-shadow: inset 3px 0 0 var(--random-highlight-border);
-}
-
-.random-highlight--custom .title,
-.random-highlight--custom .raw-link,
-.random-highlight--custom small,
-.random-highlight--custom .number,
-.random-highlight--custom .relative-date {
-  color: var(--random-highlight-text);
-}
-
-.random-highlight.random-highlight--custom .title {
-  opacity: 1;
-}
-
-.random-highlight.random-highlight--custom small {
-  opacity: 0.78;
-}
-
-.random-highlight .title {
-  display: block;
-  opacity: 0.62;
-}
-
-.random-highlight small {
-  display: block;
-  margin-top: 0.45em;
-  opacity: 0.72;
+.random-highlight .random-highlight-prefix {
+  margin-right: 0.25em;
 }
 
 @media screen and (max-width: 1024px) {
-  .random-highlight > td {
-    padding: 20px 0 !important;
-  }
-
-  .random-highlight small {
-    text-align: right;
+  .random-highlight .random-highlight-excerpt {
+    font-size: var(--font-down-1);
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  .random-highlights-body {
-    --random-highlight-bg: #{$highlight_dark_background};
-    --random-highlight-text: #{$highlight_dark_text};
-    --random-highlight-border: #{$highlight_dark_border};
-  }
-}
-

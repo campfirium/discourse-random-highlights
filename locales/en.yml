@@ -6,23 +6,12 @@ en:
       excerpt_topic_tag: "Tag for long topics. Marked excerpts in the first post are used as random highlights. Leave empty to disable excerpt sources."
       highlight_selector: "CSS selector used to extract marked excerpts from the first post cooked HTML."
       max_excerpt_length: "Maximum characters displayed for each highlight."
-      topic_cache_minutes: "How long to cache the tagged topic lists in the browser."
+      topic_cache_minutes: "How long to cache tagged topic lists in the browser while preloading the next random item."
       show_composer_button: "Add a composer toolbar button that wraps selected text with <mark>."
       composer_allowed_user_ids: "Optional comma-separated user IDs that can see the composer button. Empty means everyone. This is UI filtering, not security."
       composer_min_trust_level: "Minimum trust level required to see the composer button."
       allowed_author_user_ids: "Optional comma-separated author user IDs whose topics can appear. Empty means all authors."
       allowed_author_min_trust_level: "Minimum trust level for the first-post author to appear in the random pool."
-      highlight_style_mode:
-        description: "Choose whether random highlight rows use custom colors or the site's native topic-list styling."
-        choices:
-          custom: "Custom colors"
-          native: "Site native styling"
-      highlight_light_background: "Background color for custom highlight rows in light color schemes."
-      highlight_light_text: "Text color for custom highlight rows in light color schemes."
-      highlight_light_border: "Border color for custom highlight rows in light color schemes."
-      highlight_dark_background: "Background color for custom highlight rows in dark color schemes."
-      highlight_dark_text: "Text color for custom highlight rows in dark color schemes."
-      highlight_dark_border: "Border color for custom highlight rows in dark color schemes."
       random_item_author_mode:
         description: "Choose whether to show the source topic author or hide author avatar/user-card presentation."
         choices:

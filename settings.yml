@@ -13,7 +13,7 @@ max_excerpt_length:
   max: 1000
   description: "Maximum characters displayed for each highlight."
 topic_cache_minutes:
-  default: 5
+  default: 15
   min: 1
   max: 60
   description: "How long to cache the tagged topic lists in the browser."
@@ -36,31 +36,6 @@ allowed_author_min_trust_level:
   min: 0
   max: 4
   description: "Minimum trust level for the first-post author to appear in the random pool."
-highlight_style_mode:
-  default: custom
-  type: enum
-  choices:
-    - custom
-    - native
-  description: "How random highlight rows should be styled. 'custom' uses this component's colors; 'native' keeps the site's normal topic-list styling."
-highlight_light_background:
-  default: "#fff6c7"
-  description: "Background color for custom highlight rows in light color schemes."
-highlight_light_text:
-  default: "#3f3000"
-  description: "Text color for custom highlight rows in light color schemes."
-highlight_light_border:
-  default: "#ead06a"
-  description: "Border color for custom highlight rows in light color schemes."
-highlight_dark_background:
-  default: "#353016"
-  description: "Background color for custom highlight rows in dark color schemes."
-highlight_dark_text:
-  default: "#f7e7a0"
-  description: "Text color for custom highlight rows in dark color schemes."
-highlight_dark_border:
-  default: "#746a35"
-  description: "Border color for custom highlight rows in dark color schemes."
 random_item_author_mode:
   default: original_author
   type: enum

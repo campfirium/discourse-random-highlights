@@ -393,8 +393,8 @@ for (const requiredReleaseGate of [
   }
 }
 
-if (settings.size !== 18) {
-  fail(`settings.yml: expected 18 public settings, found ${settings.size}`);
+if (settings.size !== 11) {
+  fail(`settings.yml: expected 11 public settings, found ${settings.size}`);
 }
 for (const sourceTagSetting of ["short_topic_tag", "excerpt_topic_tag"]) {
   if (settings.get(sourceTagSetting)?.fields.get("default") !== '""') {
@@ -443,36 +443,29 @@ for (const [settingName, setting] of settings) {
   }
 }
 
-for (const className of ["random-highlight", "random-highlights-body", "random-highlight--custom"]) {
+for (const className of ["random-highlight", "random-highlights-body", "random-highlight-excerpt", "random-highlight-prefix"]) {
   if (!gjs.includes(className)) fail(`GJS: missing class ${className}`);
   if (!scss.includes(className)) fail(`SCSS: missing class ${className}`);
 }
 
 for (const setting of [
-  "highlight_style_mode",
   "random_item_author_mode",
-  "highlight_light_background",
-  "highlight_dark_background"
+  "topic_cache_minutes"
 ]) {
   if (!publicText.includes(setting)) fail(`Public files: missing setting reference ${setting}`);
 }
 
-for (const colorSetting of [
-  "highlight_light_background",
-  "highlight_light_text",
-  "highlight_light_border",
-  "highlight_dark_background",
-  "highlight_dark_text",
-  "highlight_dark_border"
-]) {
-  const defaultValue = settings.get(colorSetting)?.fields.get("default") || "";
-  if (!/^"#[0-9A-Fa-f]{6}"$/.test(defaultValue)) {
-    fail(`settings.yml: ${colorSetting} default should be a quoted 6-digit hex color`);
-  }
-}
-
 if (!gjs.includes('<tbody class="random-highlights-body">')) {
   fail("GJS: before-topic-list-body connector should keep its tbody wrapper unless runtime validation proves otherwise");
+}
+if (!gjs.includes('return "random-highlight topic-list-item"')) {
+  fail("GJS: random row should keep native topic-list row styling");
+}
+if (!gjs.includes("preloadedEntryPromise()")) {
+  fail("GJS: missing preload path for the next random highlight");
+}
+if (!gjs.includes(">✨</span>")) {
+  fail("GJS: missing subtle sparkle prefix for excerpt line");
 }
 if (!headTag.includes('icon: "pencil-alt"')) {
   fail('common/head_tag.html: expected composer toolbar icon "pencil-alt"');
@@ -488,9 +481,6 @@ if (!headTag.includes("COMPOSER_MIN_TRUST_LEVEL")) {
 }
 if (!gjs.includes("AUTHOR_MIN_TRUST_LEVEL")) {
   fail("GJS: missing author trust-level normalization");
-}
-if (!gjs.includes("HIGHLIGHT_STYLE_MODE")) {
-  fail("GJS: missing highlight style mode normalization");
 }
 if (!gjs.includes("RANDOM_ITEM_AUTHOR_MODE")) {
   fail("GJS: missing random item author mode normalization");
