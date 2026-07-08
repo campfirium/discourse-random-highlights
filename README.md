@@ -4,10 +4,6 @@ Random Highlights is a Discourse theme component that shows one curated random h
 
 It installs directly from Git as a standard Discourse theme component. No backend plugin, package registry, build step, external service, or database migration is required.
 
-## Version
-
-Current component version: `0.7.0`.
-
 ## Installation
 
 1. Open `Admin > Appearance > Themes & components`.
