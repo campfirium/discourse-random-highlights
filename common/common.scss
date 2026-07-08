@@ -41,15 +41,17 @@
 
     @if $highlight_light_background != "" and $highlight_light_opacity != "" {
       background-image: linear-gradient(
-        to top,
-        rgb(from #{$highlight_light_background} r g b / #{$highlight_light_opacity}) 0 48%,
-        transparent 48% 100%
+        to bottom,
+        transparent 0 34%,
+        rgb(from #{$highlight_light_background} r g b / #{$highlight_light_opacity}) 34% 86%,
+        transparent 86% 100%
       ) !important;
     } @else if $highlight_light_background != "" {
       background-image: linear-gradient(
-        to top,
-        #{$highlight_light_background} 0 48%,
-        transparent 48% 100%
+        to bottom,
+        transparent 0 34%,
+        #{$highlight_light_background} 34% 86%,
+        transparent 86% 100%
       ) !important;
     }
 
@@ -66,15 +68,17 @@
     .ProseMirror mark {
       @if $highlight_dark_background != "" and $highlight_dark_opacity != "" {
         background-image: linear-gradient(
-          to top,
-          rgb(from #{$highlight_dark_background} r g b / #{$highlight_dark_opacity}) 0 48%,
-          transparent 48% 100%
+          to bottom,
+          transparent 0 34%,
+          rgb(from #{$highlight_dark_background} r g b / #{$highlight_dark_opacity}) 34% 86%,
+          transparent 86% 100%
         ) !important;
       } @else if $highlight_dark_background != "" {
         background-image: linear-gradient(
-          to top,
-          #{$highlight_dark_background} 0 48%,
-          transparent 48% 100%
+          to bottom,
+          transparent 0 34%,
+          #{$highlight_dark_background} 34% 86%,
+          transparent 86% 100%
         ) !important;
       }
 
