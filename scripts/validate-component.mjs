@@ -464,10 +464,10 @@ for (const setting of [
 for (const [settingName, expectedDefault] of [
   ["highlight_light_background", '"#f3c84b"'],
   ["highlight_light_text", '"var(--primary)"'],
-  ["highlight_light_opacity", "0.28"],
+  ["highlight_light_opacity", "0.18"],
   ["highlight_dark_background", '"#fff176"'],
   ["highlight_dark_text", '"var(--primary)"'],
-  ["highlight_dark_opacity", "0.34"]
+  ["highlight_dark_opacity", "0.18"]
 ]) {
   const defaultValue = settings.get(settingName)?.fields.get("default") || "";
   if (defaultValue !== expectedDefault) {
@@ -549,8 +549,8 @@ if (!scss.includes("calc(100% - 0.045em)") || !scss.includes("padding: 0 0.05em 
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");
 }
-if (!scss.includes("color-mix(in srgb, #{$highlight_light_background} 18%") || !scss.includes("color-mix(in srgb, #{$highlight_dark_background} 18%")) {
-  fail("SCSS: marked text highlight should use browser-supported color mixing for soft fill");
+if (!scss.includes("calc(#{$highlight_light_opacity} * 100%)") || !scss.includes("min(calc(#{$highlight_dark_opacity} * 430%), 85%)")) {
+  fail("SCSS: marked text highlight should use browser-supported color mixing controlled by opacity settings");
 }
 if (!scss.includes('@if $highlight_light_background != ""')) {
   fail("SCSS: mark background settings should be optional");
