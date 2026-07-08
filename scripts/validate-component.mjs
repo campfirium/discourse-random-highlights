@@ -36,8 +36,8 @@ const EXPECTED_TRACKED_FILES = [
   "SECURITY.md",
   "about.json",
   "common/common.scss",
-  "common/head_tag.html",
   "docs/release-checklist.md",
+  "javascripts/discourse/api-initializers/random-highlight-mark.gjs",
   "javascripts/discourse/connectors/before-topic-list-body/random-highlights.gjs",
   "locales/en.yml",
   "scripts/validate-component.mjs",
@@ -206,9 +206,9 @@ const settingNames = [...settings.keys()];
 const settingSet = new Set(settingNames);
 const localeKeys = parseLocaleKeys("locales/en.yml");
 const gjs = read("javascripts/discourse/connectors/before-topic-list-body/random-highlights.gjs");
-const headTag = read("common/head_tag.html");
+const markInitializer = read("javascripts/discourse/api-initializers/random-highlight-mark.gjs");
 const scss = read("common/common.scss");
-const componentText = [gjs, headTag, scss].join("\n");
+const componentText = [gjs, markInitializer, scss].join("\n");
 const publicText = trackedText(files);
 const publicDistributionText = trackedText(files.filter((file) => file !== "scripts/validate-component.mjs"));
 
@@ -558,25 +558,31 @@ if (!scss.includes('@if $highlight_light_background != ""')) {
 if (scss.includes("border:") || scss.includes("box-shadow:")) {
   fail("SCSS: marked text highlight should not use borders or row-style shadows");
 }
-if (!headTag.includes('icon: "pencil"')) {
-  fail('common/head_tag.html: expected composer toolbar icon "pencil"');
+if (!markInitializer.includes('icon: "pencil"')) {
+  fail('composer initializer: expected composer toolbar icon "pencil"');
 }
 for (const unprovenIcon of ["highlighter", "pencil-alt"]) {
-  if (headTag.includes(`icon: "${unprovenIcon}"`)) {
-    fail(`common/head_tag.html: avoid unproven "${unprovenIcon}" icon`);
+  if (markInitializer.includes(`icon: "${unprovenIcon}"`)) {
+    fail(`composer initializer: avoid unproven "${unprovenIcon}" icon`);
   }
 }
-if (!headTag.includes("function booleanSetting")) {
-  fail("common/head_tag.html: missing composer boolean setting normalization");
+if (!markInitializer.includes('import { apiInitializer } from "discourse/lib/api"')) {
+  fail("composer initializer: missing Discourse apiInitializer import");
 }
-if (!headTag.includes("COMPOSER_MIN_TRUST_LEVEL")) {
-  fail("common/head_tag.html: missing composer trust-level normalization");
+if (!markInitializer.includes("function booleanSetting")) {
+  fail("composer initializer: missing composer boolean setting normalization");
 }
-if (headTag.includes("if (currentUserAllowedForComposer() && api.onToolbarCreate)")) {
-  fail("common/head_tag.html: toolbar callback should be registered before user readiness filters are evaluated");
+if (!markInitializer.includes("COMPOSER_MIN_TRUST_LEVEL")) {
+  fail("composer initializer: missing composer trust-level normalization");
 }
-if (!headTag.includes("condition: currentUserAllowedForComposer")) {
-  fail("common/head_tag.html: composer visibility filters should run as the toolbar button condition");
+if (markInitializer.includes("<script") || componentText.includes("text/discourse-plugin")) {
+  fail("composer initializer: do not put Plugin API code in head_tag text/discourse-plugin scripts");
+}
+if (markInitializer.includes("if (currentUserAllowedForComposer() && api.onToolbarCreate)")) {
+  fail("composer initializer: toolbar callback should be registered before user readiness filters are evaluated");
+}
+if (!markInitializer.includes("condition: currentUserAllowedForComposer")) {
+  fail("composer initializer: composer visibility filters should run as the toolbar button condition");
 }
 if (!gjs.includes("AUTHOR_MIN_TRUST_LEVEL")) {
   fail("GJS: missing author trust-level normalization");
