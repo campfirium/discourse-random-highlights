@@ -40,7 +40,7 @@ highlight_light_background:
   default: "#f3c84b"
   description: "Background color for marked highlight text in light color schemes."
 highlight_light_text:
-  default: ""
+  default: "var(--primary)"
   description: "Text color for marked highlight text in light color schemes."
 highlight_light_opacity:
   default: 0.28
@@ -51,7 +51,7 @@ highlight_dark_background:
   default: "#ead25a"
   description: "Background color for marked highlight text in dark color schemes."
 highlight_dark_text:
-  default: ""
+  default: "var(--primary)"
   description: "Text color for marked highlight text in dark color schemes."
 highlight_dark_opacity:
   default: 0.42

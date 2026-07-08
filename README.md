@@ -84,8 +84,8 @@ It checks component metadata, setting references, README coverage, locale keys, 
 - `composer_min_trust_level`: optional minimum trust level for the composer button.
 - `allowed_author_user_ids`: optional author allowlist for displayed source topics.
 - `allowed_author_min_trust_level`: optional minimum trust level for displayed source topics.
-- `highlight_light_background`, `highlight_light_text`, `highlight_light_opacity`: background color, optional text color, and opacity for marked text in light color schemes. Defaults use a soft reader-style highlight.
-- `highlight_dark_background`, `highlight_dark_text`, `highlight_dark_opacity`: background color, optional text color, and opacity for marked text in dark color schemes. Defaults use a soft reader-style highlight.
+- `highlight_light_background`, `highlight_light_text`, `highlight_light_opacity`: background color, text color, and opacity for marked text in light color schemes. Defaults use the theme text color with a soft reader-style highlight.
+- `highlight_dark_background`, `highlight_dark_text`, `highlight_dark_opacity`: background color, text color, and opacity for marked text in dark color schemes. Defaults use the theme text color with a soft reader-style highlight.
 - `random_item_author_mode`: choose `original_author` to show the source topic author avatar, or `system` to hide author avatar/user-card presentation.
 
 The component does not ship with opinionated default tag names. Sites can choose separate tags for short topics and excerpt topics, or set both settings to the same tag to combine both modes into one pool.

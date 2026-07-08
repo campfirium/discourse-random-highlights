@@ -463,10 +463,10 @@ for (const setting of [
 
 for (const [settingName, expectedDefault] of [
   ["highlight_light_background", '"#f3c84b"'],
-  ["highlight_light_text", '""'],
+  ["highlight_light_text", '"var(--primary)"'],
   ["highlight_light_opacity", "0.28"],
   ["highlight_dark_background", '"#ead25a"'],
-  ["highlight_dark_text", '""'],
+  ["highlight_dark_text", '"var(--primary)"'],
   ["highlight_dark_opacity", "0.42"]
 ]) {
   const defaultValue = settings.get(settingName)?.fields.get("default") || "";
