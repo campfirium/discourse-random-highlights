@@ -37,24 +37,24 @@ allowed_author_min_trust_level:
   max: 4
   description: "Minimum trust level for the first-post author to appear in the random pool."
 highlight_light_background:
-  default: ""
+  default: "#f3c84b"
   description: "Background color for marked highlight text in light color schemes."
 highlight_light_text:
   default: ""
   description: "Text color for marked highlight text in light color schemes."
 highlight_light_opacity:
-  default: ""
+  default: 0.28
   min: 0
   max: 1
   description: "Background opacity for marked highlight text in light color schemes."
 highlight_dark_background:
-  default: ""
+  default: "#ead25a"
   description: "Background color for marked highlight text in dark color schemes."
 highlight_dark_text:
   default: ""
   description: "Text color for marked highlight text in dark color schemes."
 highlight_dark_opacity:
-  default: ""
+  default: 0.42
   min: 0
   max: 1
   description: "Background opacity for marked highlight text in dark color schemes."

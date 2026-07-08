@@ -461,26 +461,22 @@ for (const setting of [
   if (!publicText.includes(setting)) fail(`Public files: missing setting reference ${setting}`);
 }
 
-for (const colorSetting of ["highlight_light_background", "highlight_dark_background"]) {
-  const defaultValue = settings.get(colorSetting)?.fields.get("default") || "";
-  if (defaultValue !== '""') {
-    fail(`settings.yml: ${colorSetting} default should stay empty to preserve native mark styling`);
-  }
-}
-
-for (const textColorSetting of ["highlight_light_text", "highlight_dark_text"]) {
-  const defaultValue = settings.get(textColorSetting)?.fields.get("default") || "";
-  if (defaultValue !== '""') {
-    fail(`settings.yml: ${textColorSetting} default should stay empty to preserve native mark styling`);
+for (const [settingName, expectedDefault] of [
+  ["highlight_light_background", '"#f3c84b"'],
+  ["highlight_light_text", '""'],
+  ["highlight_light_opacity", "0.28"],
+  ["highlight_dark_background", '"#ead25a"'],
+  ["highlight_dark_text", '""'],
+  ["highlight_dark_opacity", "0.42"]
+]) {
+  const defaultValue = settings.get(settingName)?.fields.get("default") || "";
+  if (defaultValue !== expectedDefault) {
+    fail(`settings.yml: ${settingName} default should be ${expectedDefault}`);
   }
 }
 
 for (const opacitySetting of ["highlight_light_opacity", "highlight_dark_opacity"]) {
   const setting = settings.get(opacitySetting);
-  const defaultValue = setting?.fields.get("default") || "";
-  if (defaultValue !== '""') {
-    fail(`settings.yml: ${opacitySetting} default should stay empty to preserve native mark styling`);
-  }
   if (setting?.fields.get("min") !== "0" || setting?.fields.get("max") !== "1") {
     fail(`settings.yml: ${opacitySetting} should use min 0 and max 1`);
   }
@@ -537,6 +533,9 @@ if (!scss.includes(".random-highlight .title") || !scss.includes("opacity: 0.5")
 }
 if (!scss.includes("mark::before")) {
   fail("SCSS: marked text highlight should use a background pseudo-element");
+}
+if (!scss.includes("height: 0.46em")) {
+  fail("SCSS: marked text highlight should use a partial-height reader-style background");
 }
 if (!scss.includes('@if $highlight_light_background != ""')) {
   fail("SCSS: mark background settings should be optional");

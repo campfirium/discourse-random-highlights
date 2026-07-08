@@ -46,8 +46,11 @@
     content: "";
     position: absolute;
     z-index: -1;
-    inset: 0 0.05em;
-    border-radius: 0.15em;
+    right: -0.02em;
+    bottom: 0.03em;
+    left: -0.02em;
+    height: 0.46em;
+    border-radius: 0.08em;
 
     @if $highlight_light_background != "" {
       background: #{$highlight_light_background};
