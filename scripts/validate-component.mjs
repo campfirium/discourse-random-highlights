@@ -543,8 +543,8 @@ if (!scss.includes("background-color: transparent !important")) {
 if (!scss.includes("background-image: linear-gradient") || !scss.includes(") !important")) {
   fail("SCSS: marked text highlight should force a stable inline background gradient");
 }
-if (!scss.includes("34% 86%")) {
-  fail("SCSS: marked text highlight should sit through the lower-middle of the glyphs, not only at the line bottom");
+if (!scss.includes("0 78%") || !scss.includes("78% 100%")) {
+  fail("SCSS: marked text highlight should cover the full marked text with a stronger lower band");
 }
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");
