@@ -42,7 +42,7 @@
     @if $highlight_light_background != "" and $highlight_light_opacity != "" {
       background-image: linear-gradient(
         to top,
-        color-mix(in srgb, #{$highlight_light_background} #{$highlight_light_opacity * 100%}, transparent) 0 48%,
+        rgb(from #{$highlight_light_background} r g b / #{$highlight_light_opacity}) 0 48%,
         transparent 48% 100%
       ) !important;
     } @else if $highlight_light_background != "" {
@@ -67,7 +67,7 @@
       @if $highlight_dark_background != "" and $highlight_dark_opacity != "" {
         background-image: linear-gradient(
           to top,
-          color-mix(in srgb, #{$highlight_dark_background} #{$highlight_dark_opacity * 100%}, transparent) 0 48%,
+          rgb(from #{$highlight_dark_background} r g b / #{$highlight_dark_opacity}) 0 48%,
           transparent 48% 100%
         ) !important;
       } @else if $highlight_dark_background != "" {

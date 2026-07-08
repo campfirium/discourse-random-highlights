@@ -546,8 +546,8 @@ if (!scss.includes("background-image: linear-gradient") || !scss.includes(") !im
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");
 }
-if (!scss.includes("color-mix(in srgb")) {
-  fail("SCSS: marked text highlight should apply configured opacity without element-level opacity");
+if (!scss.includes("rgb(from #{$highlight_light_background}") || !scss.includes("rgb(from #{$highlight_dark_background}")) {
+  fail("SCSS: marked text highlight should apply configured opacity without Sass arithmetic or element-level opacity");
 }
 if (!scss.includes('@if $highlight_light_background != ""')) {
   fail("SCSS: mark background settings should be optional");
