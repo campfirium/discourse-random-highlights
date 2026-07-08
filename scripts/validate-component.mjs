@@ -537,11 +537,11 @@ if (!scss.includes("html .cooked mark") || !scss.includes("html .d-editor-previe
 if (!scss.includes(".ProseMirror mark")) {
   fail("SCSS: marked text highlight should also cover Discourse rich-editor mark styles");
 }
-if (!scss.includes("background-color: transparent")) {
-  fail("SCSS: marked text highlight should clear Discourse's default mark background color");
+if (!scss.includes("background-color: transparent !important")) {
+  fail("SCSS: marked text highlight should force-clear Discourse/WCAG default mark background color");
 }
-if (!scss.includes("background-image: linear-gradient")) {
-  fail("SCSS: marked text highlight should use a stable inline background gradient");
+if (!scss.includes("background-image: linear-gradient") || !scss.includes(") !important")) {
+  fail("SCSS: marked text highlight should force a stable inline background gradient");
 }
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");

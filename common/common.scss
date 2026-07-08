@@ -35,8 +35,7 @@
   html .cooked mark,
   html .d-editor-preview mark,
   .ProseMirror mark {
-    background: transparent;
-    background-color: transparent;
+    background-color: transparent !important;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
 
@@ -45,13 +44,13 @@
         to top,
         color-mix(in srgb, #{$highlight_light_background} #{$highlight_light_opacity * 100%}, transparent) 0 48%,
         transparent 48% 100%
-      );
+      ) !important;
     } @else if $highlight_light_background != "" {
       background-image: linear-gradient(
         to top,
         #{$highlight_light_background} 0 48%,
         transparent 48% 100%
-      );
+      ) !important;
     }
 
     @if $highlight_light_text != "" {
@@ -70,13 +69,13 @@
           to top,
           color-mix(in srgb, #{$highlight_dark_background} #{$highlight_dark_opacity * 100%}, transparent) 0 48%,
           transparent 48% 100%
-        );
+        ) !important;
       } @else if $highlight_dark_background != "" {
         background-image: linear-gradient(
           to top,
           #{$highlight_dark_background} 0 48%,
           transparent 48% 100%
-        );
+        ) !important;
       }
 
       @if $highlight_dark_text != "" {
