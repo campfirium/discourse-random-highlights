@@ -520,11 +520,11 @@ if (!scss.includes("opacity: 0.68")) {
 if (!scss.includes("font-size: var(--font-down-1)")) {
   fail("SCSS: source topic title line should use Discourse's smaller metadata scale");
 }
-if (!scss.includes("margin-right: 0.12em")) {
-  fail("SCSS: sparkle prefix should stay visually close to the source title");
+if (scss.includes("margin-right:")) {
+  fail("SCSS: sparkle prefix should not add hard-coded spacing before the source title");
 }
-if (!scss.includes("border-bottom: 1px solid var(--primary-low)")) {
-  fail("SCSS: random row should keep a topic-list-like bottom divider");
+if (scss.includes("border-bottom:")) {
+  fail("SCSS: random row should not add its own divider over Discourse topic-list borders");
 }
 if (!scss.includes(".random-highlight .title") || !scss.includes("opacity: 0.5")) {
   fail("SCSS: random body text should use the original dimmed title treatment");
