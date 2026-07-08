@@ -549,7 +549,7 @@ if (!scss.includes("calc(100% - 0.06em)") || !scss.includes("padding: 0 0.06em 0
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");
 }
-if (!scss.includes("#{$highlight_light_opacity * 65%}") || !scss.includes("#{$highlight_dark_opacity * 55%}")) {
+if (!scss.includes("color-mix(in srgb, #{$highlight_light_background} 18%") || !scss.includes("color-mix(in srgb, #{$highlight_dark_background} 14%")) {
   fail("SCSS: marked text highlight should use browser-supported color mixing for soft fill");
 }
 if (!scss.includes('@if $highlight_light_background != ""')) {
