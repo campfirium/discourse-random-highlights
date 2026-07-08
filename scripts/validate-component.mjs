@@ -505,6 +505,9 @@ if (!gjs.includes("preloadedEntryPromise()")) {
 if (!gjs.includes("readCachedEntry()")) {
   fail("GJS: missing synchronous cached-entry display path");
 }
+if (!gjs.includes("if (!this.entry)")) {
+  fail("GJS: cached entry should not be replaced by the background preload during the same page view");
+}
 if (!gjs.includes(">✨</span>")) {
   fail("GJS: missing sparkle prefix for source topic title line");
 }

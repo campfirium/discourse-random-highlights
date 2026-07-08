@@ -392,8 +392,10 @@ export default class RandomHighlights extends Component {
 
   async load() {
     try {
-      this.entry = await preloadedEntryPromise();
-      refreshPreload();
+      if (!this.entry) {
+        this.entry = await preloadedEntryPromise();
+        refreshPreload();
+      }
     } catch (error) {
       // Keep the topic list usable if the source tag is missing or private.
       // eslint-disable-next-line no-console
