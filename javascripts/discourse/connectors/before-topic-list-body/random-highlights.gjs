@@ -5,10 +5,11 @@ const SHORT_TOPIC_TAG = String(settings.short_topic_tag || "").trim();
 const EXCERPT_TOPIC_TAG = String(settings.excerpt_topic_tag || "").trim();
 const HIGHLIGHT_SELECTOR = String(settings.highlight_selector || "mark").trim() || "mark";
 const MAX_EXCERPT_LENGTH = numberSetting(settings.max_excerpt_length, 220, 40, 1000);
-const CACHE_MS = numberSetting(settings.topic_cache_minutes, 5, 1, 60) * 60 * 1000;
+const CACHE_MS = numberSetting(settings.topic_cache_minutes, 10080, 1, 10080) * 60 * 1000;
 const AUTHOR_MIN_TRUST_LEVEL = numberSetting(settings.allowed_author_min_trust_level, 0, 0, 4);
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
+const ENTRY_CACHE_KEY = "randomHighlightsEntryCacheV1:" + SOURCE_SIGNATURE;
 const RANDOM_ITEM_AUTHOR_MODE = String(settings.random_item_author_mode || "original_author").trim();
 const SHOW_ORIGINAL_AUTHOR = RANDOM_ITEM_AUTHOR_MODE !== "system";
 let PRELOADED_ENTRY_PROMISE = null;
@@ -65,7 +66,7 @@ function topicUrl(topic) {
 
 function readJSON(key) {
   try {
-    const value = window.sessionStorage && window.sessionStorage.getItem(key);
+    const value = window.localStorage && window.localStorage.getItem(key);
     return value ? JSON.parse(value) : null;
   } catch (_error) {
     return null;
@@ -73,6 +74,21 @@ function readJSON(key) {
 }
 
 function writeJSON(key, value) {
+  try {
+    if (window.localStorage) window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (_error) {}
+}
+
+function readSessionJSON(key) {
+  try {
+    const value = window.sessionStorage && window.sessionStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
+  } catch (_error) {
+    return null;
+  }
+}
+
+function writeSessionJSON(key, value) {
   try {
     if (window.sessionStorage) window.sessionStorage.setItem(key, JSON.stringify(value));
   } catch (_error) {}
@@ -169,6 +185,23 @@ function setCachedTopics(topics) {
   window._randomHighlightsTopicCache = { signature: SOURCE_SIGNATURE, fetchedAt: Date.now(), topics };
 }
 
+function cacheableEntry(entry) {
+  if (!entry) return null;
+  return { signature: SOURCE_SIGNATURE, fetchedAt: Date.now(), entry };
+}
+
+function readCachedEntry() {
+  const cache = readJSON(ENTRY_CACHE_KEY);
+  if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !cache.entry) return null;
+  if (Date.now() - cache.fetchedAt > CACHE_MS) return null;
+  return cache.entry;
+}
+
+function writeCachedEntry(entry) {
+  const cache = cacheableEntry(entry);
+  if (cache) writeJSON(ENTRY_CACHE_KEY, cache);
+}
+
 async function fetchTaggedTopics() {
   const cached = getCachedTopics();
   if (cached) return cached;
@@ -246,7 +279,7 @@ function entryFromTopic(topic, id, text) {
 
 async function fetchNextHighlight() {
   const topics = await fetchTaggedTopics();
-  const storedQueue = readJSON(QUEUE_KEY);
+  const storedQueue = readSessionJSON(QUEUE_KEY);
   let queue = (Array.isArray(storedQueue) ? storedQueue : []).filter((key) =>
     topics.some((topic) => randomKey(topic) === key)
   );
@@ -254,7 +287,7 @@ async function fetchNextHighlight() {
 
   while (queue.length) {
     const key = queue.shift();
-    writeJSON(QUEUE_KEY, queue);
+    writeSessionJSON(QUEUE_KEY, queue);
 
     const topic = topics.find((item) => randomKey(item) === key);
     if (!topic) continue;
@@ -262,7 +295,10 @@ async function fetchNextHighlight() {
     try {
       const entries = await fetchEntriesForTopic(topic);
       const entry = shuffle(entries)[0];
-      if (entry) return entry;
+      if (entry) {
+        writeCachedEntry(entry);
+        return entry;
+      }
     } catch (error) {
       // A private or deleted topic should not prevent other sources from rendering.
       // eslint-disable-next-line no-console
@@ -285,7 +321,7 @@ function refreshPreload() {
 if (sourceConfigs().length) preloadedEntryPromise();
 
 export default class RandomHighlights extends Component {
-  @tracked entry = null;
+  @tracked entry = readCachedEntry();
 
   constructor() {
     super(...arguments);
@@ -407,5 +443,4 @@ export default class RandomHighlights extends Component {
     {{/if}}
   </template>
 }
-
 

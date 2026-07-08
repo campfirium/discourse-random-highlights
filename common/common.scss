@@ -16,32 +16,56 @@
   margin-right: 0.25em;
 }
 
-mark {
-  position: relative;
-  z-index: 0;
-  background: transparent;
-  color: inherit;
-}
-
-mark::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0 0.05em;
-  border-radius: 0.15em;
-  background: #{$highlight_light_background};
-  opacity: #{$highlight_light_opacity};
-}
-
 @media screen and (max-width: 1024px) {
   .random-highlight .random-highlight-excerpt {
     font-size: var(--font-down-1);
   }
 }
 
-@media (prefers-color-scheme: dark) {
+@if $highlight_light_background != "" or $highlight_light_text != "" or $highlight_light_opacity != "" {
+  mark {
+    position: relative;
+    z-index: 0;
+    background: transparent;
+
+    @if $highlight_light_text != "" {
+      color: #{$highlight_light_text};
+    }
+  }
+
   mark::before {
-    background: #{$highlight_dark_background};
-    opacity: #{$highlight_dark_opacity};
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0 0.05em;
+    border-radius: 0.15em;
+
+    @if $highlight_light_background != "" {
+      background: #{$highlight_light_background};
+    }
+
+    @if $highlight_light_opacity != "" {
+      opacity: #{$highlight_light_opacity};
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  @if $highlight_dark_background != "" or $highlight_dark_text != "" or $highlight_dark_opacity != "" {
+    mark {
+      @if $highlight_dark_text != "" {
+        color: #{$highlight_dark_text};
+      }
+    }
+
+    mark::before {
+      @if $highlight_dark_background != "" {
+        background: #{$highlight_dark_background};
+      }
+
+      @if $highlight_dark_opacity != "" {
+        opacity: #{$highlight_dark_opacity};
+      }
+    }
   }
 }
