@@ -12,7 +12,7 @@
 - Clamp numeric settings in the component runtime to protect against invalid admin-entered values.
 - Preserve and enrich author metadata from topic payloads, and encode profile links.
 - Register and use a highlighter composer toolbar icon through Discourse theme metadata.
-- Add Simplified Chinese theme translations for the composer toolbar title and settings.
+- Use an English fallback for the composer toolbar title when the active site locale lacks theme translations.
 - Update installation instructions for the current Discourse Themes & components admin UI.
 - Add localized theme metadata and setting descriptions for the Discourse admin UI.
 - Add a GitHub bug report template and support instructions.

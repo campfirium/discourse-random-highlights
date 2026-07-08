@@ -1,4 +1,8 @@
 import { apiInitializer } from "discourse/lib/api";
+import { i18n } from "discourse-i18n";
+
+const MARK_BUTTON_TITLE_KEY = "random_highlights.mark_button_title";
+const MARK_BUTTON_TITLE_FALLBACK = "Mark highlight";
 
 function parseIdList(value) {
   return String(value || "")
@@ -39,12 +43,21 @@ export default apiInitializer((api) => {
       id: "random-highlight-mark",
       group: "fontStyles",
       icon: "highlighter",
-      title: "random_highlights.mark_button_title",
+      title: MARK_BUTTON_TITLE_KEY,
       condition: currentUserAllowedForComposer,
       perform: (event) =>
         event.applySurround("<mark>", "</mark>", "random_highlight_text", {
           multiline: false
         })
     });
+
+    const markButton = toolbar.groups
+      .find((item) => item.group === "fontStyles")
+      ?.buttons.find((button) => button.id === "random-highlight-mark");
+    if (markButton) {
+      markButton.title = i18n(MARK_BUTTON_TITLE_KEY, {
+        defaultValue: MARK_BUTTON_TITLE_FALLBACK
+      });
+    }
   });
 });
