@@ -559,11 +559,11 @@ if (!gjs.includes("AUTHOR_MIN_TRUST_LEVEL")) {
 if (!gjs.includes("RANDOM_ITEM_AUTHOR_MODE")) {
   fail("GJS: missing random item author mode normalization");
 }
-if (!gjs.includes("{{format-date this.activityDate")) {
-  fail("GJS: activity column should use Discourse's format-date helper");
+if (!gjs.includes("{{this.activityLabel}}")) {
+  fail("GJS: activity column should render a stable text label");
 }
-if (gjs.includes("function relativeDateLabel") || gjs.includes('return `${year}/${month}`')) {
-  fail("GJS: activity labels should not use custom date formatting");
+if (gjs.includes("{{format-date")) {
+  fail("GJS: avoid format-date helper in the connector template until runtime compatibility is proven");
 }
 if (!gjs.includes('String(settings.short_topic_tag || "").trim()')) {
   fail("GJS: source tags should be trimmed before cache/signature use");
