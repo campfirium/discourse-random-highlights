@@ -465,7 +465,7 @@ for (const [settingName, expectedDefault] of [
   ["highlight_light_background", '"#f3c84b"'],
   ["highlight_light_text", '"var(--primary)"'],
   ["highlight_light_opacity", "0.28"],
-  ["highlight_dark_background", '"#ead25a"'],
+  ["highlight_dark_background", '"#fff176"'],
   ["highlight_dark_text", '"var(--primary)"'],
   ["highlight_dark_opacity", "0.34"]
 ]) {
@@ -543,13 +543,13 @@ if (!scss.includes("background-color: transparent !important")) {
 if (!scss.includes("background-image: linear-gradient") || !scss.includes(") !important")) {
   fail("SCSS: marked text highlight should force a stable inline background gradient");
 }
-if (!scss.includes("calc(100% - 0.07em)") || !scss.includes("padding: 0 0.06em 0.09em")) {
+if (!scss.includes("calc(100% - 0.045em)") || !scss.includes("padding: 0 0.05em 0.075em")) {
   fail("SCSS: marked text highlight should use a full soft fill plus a thin lower outside band");
 }
 if (!scss.includes("box-decoration-break: clone")) {
   fail("SCSS: marked text highlight should clone background styling across wrapped lines");
 }
-if (!scss.includes("color-mix(in srgb, #{$highlight_light_background} 26%") || !scss.includes("color-mix(in srgb, #{$highlight_dark_background} 24%")) {
+if (!scss.includes("color-mix(in srgb, #{$highlight_light_background} 18%") || !scss.includes("color-mix(in srgb, #{$highlight_dark_background} 18%")) {
   fail("SCSS: marked text highlight should use browser-supported color mixing for soft fill");
 }
 if (!scss.includes('@if $highlight_light_background != ""')) {

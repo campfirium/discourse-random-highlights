@@ -48,7 +48,7 @@ highlight_light_opacity:
   max: 1
   description: "Background opacity for marked highlight text in light color schemes."
 highlight_dark_background:
-  default: "#ead25a"
+  default: "#fff176"
   description: "Background color for marked highlight text in dark color schemes."
 highlight_dark_text:
   default: "var(--primary)"
