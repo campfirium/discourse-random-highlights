@@ -543,7 +543,7 @@ if (!scss.includes("background-color: transparent !important")) {
 if (!scss.includes("background-image: linear-gradient") || !scss.includes(") !important")) {
   fail("SCSS: marked text highlight should force a stable inline background gradient");
 }
-if (!scss.includes("calc(100% - 0.045em)") || !scss.includes("padding: 0 0.05em 0.075em")) {
+if (!scss.includes("calc(100% - 0.06em)") || !scss.includes("padding: 0 0.05em 0.09em")) {
   fail("SCSS: marked text highlight should use a full soft fill plus a thin lower outside band");
 }
 if (!scss.includes("box-decoration-break: clone")) {
