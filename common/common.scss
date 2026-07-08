@@ -40,13 +40,13 @@
     -webkit-box-decoration-break: clone;
     border-radius: 0.08em;
     margin-inline: -0.03em;
-    padding: 0 0.05em 0.09em;
+    padding: 0 0.05em 0.15em;
 
     @if $highlight_light_background != "" and $highlight_light_opacity != "" {
       background-image: linear-gradient(
         to bottom,
-        color-mix(in srgb, #{$highlight_light_background} calc(#{$highlight_light_opacity} * 100%), transparent) 0 calc(100% - 0.06em),
-        color-mix(in srgb, #{$highlight_light_background} min(calc(#{$highlight_light_opacity} * 430%), 85%), transparent) calc(100% - 0.06em) 100%
+        color-mix(in srgb, #{$highlight_light_background} calc(#{$highlight_light_opacity} * 100%), transparent) 0 calc(100% - 0.12em),
+        color-mix(in srgb, #{$highlight_light_background} min(calc(#{$highlight_light_opacity} * 430%), 85%), transparent) calc(100% - 0.12em) 100%
       ) !important;
     } @else if $highlight_light_background != "" {
       background-image: linear-gradient(
@@ -69,8 +69,8 @@
       @if $highlight_dark_background != "" and $highlight_dark_opacity != "" {
         background-image: linear-gradient(
           to bottom,
-          color-mix(in srgb, #{$highlight_dark_background} calc(#{$highlight_dark_opacity} * 100%), transparent) 0 calc(100% - 0.06em),
-          color-mix(in srgb, #{$highlight_dark_background} min(calc(#{$highlight_dark_opacity} * 430%), 85%), transparent) calc(100% - 0.06em) 100%
+          color-mix(in srgb, #{$highlight_dark_background} calc(#{$highlight_dark_opacity} * 100%), transparent) 0 calc(100% - 0.12em),
+          color-mix(in srgb, #{$highlight_dark_background} min(calc(#{$highlight_dark_opacity} * 430%), 85%), transparent) calc(100% - 0.12em) 100%
         ) !important;
       } @else if $highlight_dark_background != "" {
         background-image: linear-gradient(
