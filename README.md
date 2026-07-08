@@ -1,115 +1,80 @@
 # Random Highlights for Discourse
 
-Random Highlights is a Discourse theme component that places one curated random highlight above the topic list. It is intended for forums that want a lightweight "quote of the moment", study prompt, writing excerpt, or recurring reminder without installing a backend plugin.
+Random Highlights is a Discourse theme component that shows one curated random highlight above the topic list. Highlights can come from tagged short topics or from `<mark>...</mark>` excerpts inside longer source topics.
 
-The component supports two source modes:
+It installs directly from Git as a standard Discourse theme component. No backend plugin, package registry, build step, external service, or database migration is required.
 
-- Short-topic mode: tag short topics and use each first post as a complete random item.
-- Excerpt mode: tag longer source topics and mark useful inline excerpts with `<mark>...</mark>`; each marked excerpt can appear as a random item.
+## Version
 
-The rendered row keeps Discourse topic-list structure: the random text is shown first, the source topic title appears underneath with a subtle `✨` prefix, and clicking the row opens the source topic. On desktop, available topic metadata is reused for author presentation, reply count, view count, and activity time.
-
-## Release Status
-
-`v0.7.0` is not tagged yet. The current `main` branch is suitable for final validation from Git, but run the install, Git update, topic-list rendering, composer behavior, and styling checks on a non-production Discourse theme before using it as a production component.
-
-See [the release checklist](docs/release-checklist.md) before tagging a public release.
+Current component version: `0.7.0`.
 
 ## Installation
 
-1. Open Discourse admin: `Admin > Appearance > Themes & components`.
-2. Install a component from this repository URL: `https://github.com/campfirium/discourse-random-highlights`.
-3. Add the component to the active theme that should show random highlights.
-4. Configure at least one source tag through `short_topic_tag` or `excerpt_topic_tag`.
+1. Open `Admin > Appearance > Themes & components`.
+2. Install a component from `https://github.com/campfirium/discourse-random-highlights`.
+3. Add the component to the theme where it should appear.
+4. Configure `short_topic_tag`, `excerpt_topic_tag`, or both.
 
-No package registry, build step, external service, backend plugin, or database migration is required.
+## Source Modes
 
-## Quick Setup
+Short-topic mode uses the first post of each tagged topic as a complete random item. Set `short_topic_tag` to the tag used by those topics.
 
-Use short-topic mode when every tagged topic is itself a short item:
+Excerpt mode reads marked excerpts from the first post of each tagged source topic. Wrap each reusable excerpt in `<mark>...</mark>` and set `excerpt_topic_tag` to that tag.
 
-1. Create one or more public topics.
-2. Put the full highlight text in the first post.
-3. Add the same tag to those topics.
-4. Set `short_topic_tag` to that tag.
+If both settings use the same tag, marked excerpts are preferred and unmarked topics can fall back to first-post text. The component does not ship with site-specific default tags.
 
-Use excerpt mode when highlights come from longer source posts:
+## Behavior
 
-1. Create or choose public source topics.
-2. Wrap each useful inline excerpt in `<mark>...</mark>`.
-3. Add the same tag to those topics.
-4. Set `excerpt_topic_tag` to that tag.
+The random row links back to the source topic and reuses available Discourse topic metadata for author, reply count, view count, and activity time on desktop.
 
-To combine both modes into one pool, set `short_topic_tag` and `excerpt_topic_tag` to the same topic tag. The component does not ship with opinionated default tag names.
+The browser caches the tagged topic list and the last resolved random item for `topic_cache_minutes`, which defaults to 7 days. This lets repeat visits render immediately while the next random item refreshes in the background. Session storage is used only to avoid immediate repeats from the same topic during the current browsing session.
 
 ## Composer Button
 
-When `show_composer_button` is enabled, the composer toolbar gets a highlighter button that wraps the current inline selection in mark tags. The button is designed for short inline selections. Check composer preview before relying on complex multi-line or cross-structure selections as excerpt sources.
+When `show_composer_button` is enabled, the composer toolbar includes a highlighter button that wraps the selected inline text in `<mark>...</mark>`.
 
-The composer button can be limited by `composer_allowed_user_ids` and `composer_min_trust_level`. These settings control UI workflow only; they are not a security boundary.
-
-## Random Row Behavior
-
-The browser preloads the next random item as the component script loads. It caches tagged topic lists and the last resolved random item for `topic_cache_minutes`, so repeat visits can render the row immediately while the next item refreshes in the background.
-
-The display queue is stored only in `sessionStorage`. It is used to avoid immediate repeats from the same topic during a browsing session, not to guarantee perfect per-excerpt rotation across every visitor.
+`composer_allowed_user_ids` and `composer_min_trust_level` only control whether the button is shown in the UI. They are not access-control or security boundaries.
 
 ## Styling
 
-Marked text uses a configurable reader-style highlight instead of the default browser/Discourse mark styling. Light and dark color schemes have separate background, text color, and opacity settings:
+Marked text uses a configurable highlighter style for both cooked posts and composer preview. Site admins can adjust light and dark colors from component settings:
 
 - `highlight_light_background`, `highlight_light_text`, `highlight_light_opacity`
 - `highlight_dark_background`, `highlight_dark_text`, `highlight_dark_opacity`
 
-The default style keeps the text color on `var(--primary)`, applies a translucent highlight fill behind the text, and uses a stronger lower stroke for a highlighter-like finish. Site admins can change colors and opacity from the component settings; no custom CSS is required for normal color changes.
+Leave a color setting at its default value to use the shipped style. To return a changed setting to the shipped behavior, reset that setting in the Discourse component settings UI.
 
 ## Settings
 
-- `short_topic_tag`: tag used for short topics. The first post is used as one random item. Leave empty to disable this source mode.
-- `excerpt_topic_tag`: tag used for long-form source topics. Each `<mark>` excerpt in the first post is used as one random item. Leave empty to disable this source mode.
-- `highlight_selector`: selector used to extract marked excerpts. Defaults to `mark`.
-- `max_excerpt_length`: maximum displayed text length.
-- `topic_cache_minutes`: how long tagged topic lists and the last resolved random item are cached in the browser. Defaults to 7 days.
-- `show_composer_button`: adds a composer toolbar button that marks selected text as a highlight.
-- `composer_allowed_user_ids`: optional UI allowlist for the composer button.
+- `short_topic_tag`: tag for short topics. Leave empty to disable this source mode.
+- `excerpt_topic_tag`: tag for source topics containing marked excerpts. Leave empty to disable this source mode.
+- `highlight_selector`: CSS selector used to find excerpts in cooked post HTML. Defaults to `mark`.
+- `max_excerpt_length`: maximum displayed highlight length.
+- `topic_cache_minutes`: browser cache duration for tagged topic lists and the last resolved random item. Defaults to 7 days.
+- `show_composer_button`: shows or hides the composer toolbar button.
+- `composer_allowed_user_ids`: optional comma-separated UI allowlist for the composer button.
 - `composer_min_trust_level`: optional minimum trust level for the composer button.
-- `allowed_author_user_ids`: optional author allowlist for displayed source topics.
-- `allowed_author_min_trust_level`: optional minimum trust level for displayed source topics.
-- `highlight_light_background`, `highlight_light_text`, `highlight_light_opacity`: background color, text color, and opacity for marked text in light color schemes.
-- `highlight_dark_background`, `highlight_dark_text`, `highlight_dark_opacity`: background color, text color, and opacity for marked text in dark color schemes.
-- `random_item_author_mode`: choose `original_author` to show the source topic author avatar, or `system` to hide author avatar/user-card presentation.
-
-Discourse theme settings have defaults. If a site changes a setting and later wants the shipped behavior again, reset that setting to the value shown by the component default.
-
-## Updates
-
-Discourse installs and updates theme components from Git. After updating the component, refresh the installed theme component from the admin UI and verify the topic list and composer behavior on the target site.
+- `allowed_author_user_ids`: optional comma-separated source-author allowlist.
+- `allowed_author_min_trust_level`: optional minimum source-author trust level.
+- `highlight_light_background`, `highlight_light_text`, `highlight_light_opacity`: marked-text styling for light color schemes.
+- `highlight_dark_background`, `highlight_dark_text`, `highlight_dark_opacity`: marked-text styling for dark color schemes.
+- `random_item_author_mode`: show the original source author, or hide avatar/user-card presentation with `system`.
 
 ## Compatibility
 
-This component targets modern Discourse theme components using Glimmer `.gjs` connectors and the Discourse plugin API initializer. Validate it on your target Discourse version before enabling it on a production theme.
+This component targets modern Discourse theme components using Glimmer `.gjs` connectors and the Discourse theme API initializer. Validate install, Git update, topic-list rendering, composer behavior, and styling on your target Discourse version before tagging or deploying a release theme.
 
 ## Data and Security
 
-The component reads source data from Discourse JSON endpoints that the current visitor can already access. It does not add server-side permissions, expose private topics, migrate old content, or write database records.
+The component reads Discourse JSON endpoints that the current visitor can already access. It does not add server-side permissions, expose private topics, migrate content, or write database records.
 
-Marked excerpts are rendered as escaped text. The component parses cooked post HTML only to find matching highlight elements and extract their text; it does not render source post HTML inside the topic list row.
+Marked excerpts are rendered as escaped text. Source post HTML is parsed only to find matching excerpt elements and extract text.
 
-The author and composer allowlist settings are client-side filtering for presentation and workflow control. They are not a security boundary. For security-sensitive reports, see `SECURITY.md`.
-
-## Maintenance
-
-Run the local validation script before committing component changes:
-
-```bash
-node scripts/validate-component.mjs
-```
-
-It checks component metadata, setting references, README coverage, locale keys, support/security entry points, expected public files, and compatibility guardrails. It does not replace real Discourse install/update validation.
+Author and composer filters are client-side presentation and workflow filters only. Use Discourse server-side permissions for access control. For security reports, see `SECURITY.md`.
 
 ## Support
 
-Report issues at `https://github.com/campfirium/discourse-random-highlights/issues`. Include your Discourse version, installed component commit, relevant component settings, reproduction steps, browser console errors, and screenshots for rendering or styling problems.
+Report issues at `https://github.com/campfirium/discourse-random-highlights/issues`. Include your Discourse version, installed component commit, relevant settings, reproduction steps, browser console errors, and screenshots for visual problems.
 
 ## License
 

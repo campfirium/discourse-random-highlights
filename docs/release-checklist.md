@@ -6,11 +6,12 @@ This repository intentionally does not ship a build step. Static validation is n
 
 ## Static Gate
 
-- Run `node scripts/validate-component.mjs` from the repository root.
 - Confirm `about.json` has `"component": true` and the intended `theme_version`.
 - Confirm `CHANGELOG.md` has an entry for the version being released.
 - Confirm README settings match `settings.yml` and the implemented behavior.
+- Confirm `locales/en.yml` has theme metadata for every public setting.
 - Confirm `SECURITY.md` and the GitHub issue template still describe the supported report path and client-side filtering limits.
+- Confirm no `.lab/`, `.agents/`, `.tmp/`, local validation scripts, logs, API keys, or site migration data are tracked.
 
 ## Discourse Test Site Gate
 
@@ -72,16 +73,16 @@ Check with a logged-in test user.
 
 Check both light and dark color schemes.
 
-- `highlight_style_mode: custom` applies custom row background, text, and border colors.
 - Default colors are readable in the target site's actual palette.
 - Edited light and dark colors apply after saving settings.
-- `highlight_style_mode: native` removes the custom random-row background and border.
+- Empty or reset color settings return to the shipped component defaults.
+- Marked text is readable in cooked posts and composer preview.
 
 ## Release Decision
 
 Before tagging:
 
-- Save screenshots for desktop light, desktop dark, mobile, composer toolbar, settings page, native style mode, and system author mode.
+- Save screenshots for desktop light, desktop dark, mobile, composer toolbar, settings page, mark styling, and system author mode.
 - Decide whether the oldest validated Discourse version should be recorded in `about.json` as `minimum_discourse_version`.
 - Tag `v0.7.0` only after install, update, rendering, composer, styling, and source-mode checks pass.
 - If any runtime item fails, fix the component or narrow the documented compatibility range before tagging.

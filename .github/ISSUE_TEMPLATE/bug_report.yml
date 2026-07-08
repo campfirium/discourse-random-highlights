@@ -41,7 +41,7 @@ body:
     id: settings
     attributes:
       label: Relevant component settings
-      description: Include tag settings, selector, filters, style mode, and author mode.
+      description: Include tag settings, selector, filters, highlight colors, and author mode.
       render: yaml
     validations:
       required: true
