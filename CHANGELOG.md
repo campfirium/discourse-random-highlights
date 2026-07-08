@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.7.0 - Unreleased
+## 0.7.0 - 2026-07-08
 
 - Add the initial Discourse theme component for random highlights above the topic list.
 - Support short-topic sources and marked-excerpt sources from tagged public topics.
@@ -14,5 +14,3 @@
 - Add localized theme metadata and setting descriptions for the Discourse admin UI.
 - Document installation, settings, data boundaries, security scope, support, and release checks.
 - Add public issue reporting, security policy, contribution guidance, and MIT license files.
-
-Tag `v0.7.0` after real Discourse install, Git update, rendering, composer, and styling checks pass.
