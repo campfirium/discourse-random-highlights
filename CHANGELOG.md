@@ -14,3 +14,4 @@
 - Add localized theme metadata and setting descriptions for the Discourse admin UI.
 - Document installation, settings, data boundaries, security scope, support, and release checks.
 - Add public issue reporting, security policy, contribution guidance, and MIT license files.
+- Fix random-row activity dates by using Discourse's built-in tiny date formatter.
