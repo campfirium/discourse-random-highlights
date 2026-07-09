@@ -1,6 +1,7 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import dFormatDate from "discourse/ui-kit/helpers/d-format-date";
+import dNumber from "discourse/ui-kit/helpers/d-number";
 
 const SHORT_TOPIC_TAG = String(settings.short_topic_tag || "").trim();
 const EXCERPT_TOPIC_TAG = String(settings.excerpt_topic_tag || "").trim();
@@ -152,13 +153,6 @@ function originalPoster(topic) {
   return posters.find((poster) => String(poster.extras || "").includes("original")) || posters[0];
 }
 
-function formatCount(value) {
-  const number = Number(value || 0);
-  if (number >= 1000000) return Math.round(number / 100000) / 10 + "m";
-  if (number >= 1000) return Math.round(number / 100) / 10 + "k";
-  return String(number);
-}
-
 function getCachedTopics() {
   const cache = window._randomHighlightsTopicCache;
   if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !Array.isArray(cache.topics)) return null;
@@ -185,6 +179,23 @@ function readCachedEntry() {
 function writeCachedEntry(entry) {
   const cache = cacheableEntry(entry);
   if (cache) writeJSON(ENTRY_CACHE_KEY, cache);
+}
+
+function applyTopicMetadata(topic, payload) {
+  if (!topic || !payload) return topic;
+  [
+    "title",
+    "fancy_title",
+    "slug",
+    "posts_count",
+    "views",
+    "bumped_at",
+    "last_posted_at",
+    "created_at"
+  ].forEach((key) => {
+    if (payload[key] !== undefined && payload[key] !== null) topic[key] = payload[key];
+  });
+  return topic;
 }
 
 async function fetchTaggedTopics() {
@@ -230,10 +241,24 @@ async function fetchEntriesForTopic(topic) {
   if (!response.ok) throw new Error("topic request failed: " + response.status);
 
   const payload = await response.json();
+  applyTopicMetadata(topic, payload);
   const post = firstPost(payload);
   rememberPostUser(topic, post);
   if (!post || !authorAllowed(topic, post)) return [];
   return extractHighlights(topic, post);
+}
+
+async function refreshEntryMetadata(entry) {
+  if (!entry || !entry.href || !entry.topic) return entry;
+
+  const response = await fetch(entry.href + ".json", { credentials: "same-origin" });
+  if (!response.ok) return entry;
+
+  const payload = await response.json();
+  const topic = Object.assign({}, applyTopicMetadata(Object.assign({}, entry.topic), payload));
+  const refreshedEntry = Object.assign({}, entry, { topic });
+  writeCachedEntry(refreshedEntry);
+  return refreshedEntry;
 }
 
 function extractHighlights(topic, post) {
@@ -356,12 +381,8 @@ export default class RandomHighlights extends Component {
     return this.username ? "/u/" + encodeURIComponent(this.username) : "";
   }
 
-  get postCount() {
-    return formatCount(this.entry?.topic?.posts_count || 0);
-  }
-
-  get viewCount() {
-    return formatCount(this.entry?.topic?.views || 0);
+  get replyCount() {
+    return Math.max(0, Number(this.entry?.topic?.posts_count || 0) - 1);
   }
 
   get activityDate() {
@@ -371,7 +392,9 @@ export default class RandomHighlights extends Component {
 
   async load() {
     try {
-      if (!this.entry) {
+      if (this.entry) {
+        this.entry = await refreshEntryMetadata(this.entry);
+      } else {
         this.entry = await preloadedEntryPromise();
         refreshPreload();
       }
@@ -408,9 +431,9 @@ export default class RandomHighlights extends Component {
               {{/if}}
             </td>
             <td class="num posts-map posts topic-list-data">
-              <a href={{this.entry.href}} class="badge-posts"><span class="number">{{this.postCount}}</span></a>
+              <a href={{this.entry.href}} class="badge-posts">{{dNumber this.replyCount noTitle="true"}}</a>
             </td>
-            <td class="num views topic-list-data"><span class="number">{{this.viewCount}}</span></td>
+            <td class="num views topic-list-data">{{dNumber this.entry.topic.views numberKey="views_long"}}</td>
             <td class="activity num topic-list-data age">
               <a href={{this.entry.href}} class="post-activity">
                 {{dFormatDate this.activityDate format="tiny" noTitle="true"}}

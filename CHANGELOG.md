@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2 - 2026-07-09
+
+- Fix random-row reply and view counts so they match Discourse topic-list semantics and formatting.
+
 ## 0.7.1 - 2026-07-09
 
 - Fix random-row activity dates by using Discourse's built-in tiny date formatter.
