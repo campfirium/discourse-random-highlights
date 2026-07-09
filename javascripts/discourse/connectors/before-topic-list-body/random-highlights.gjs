@@ -1,5 +1,6 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
+import dFormatDate from "discourse/ui-kit/helpers/d-format-date";
 
 const SHORT_TOPIC_TAG = String(settings.short_topic_tag || "").trim();
 const EXCERPT_TOPIC_TAG = String(settings.excerpt_topic_tag || "").trim();
@@ -412,7 +413,7 @@ export default class RandomHighlights extends Component {
             <td class="num views topic-list-data"><span class="number">{{this.viewCount}}</span></td>
             <td class="activity num topic-list-data age">
               <a href={{this.entry.href}} class="post-activity">
-                {{format-date this.activityDate format="tiny"}}
+                {{dFormatDate this.activityDate format="tiny" noTitle="true"}}
               </a>
             </td>
           {{/if}}
