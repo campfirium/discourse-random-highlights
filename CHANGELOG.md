@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1 - 2026-07-09
+
+- Fix random-row activity dates by using Discourse's built-in tiny date formatter.
+
 ## 0.7.0 - 2026-07-08
 
 - Add the initial Discourse theme component for random highlights above the topic list.
@@ -14,4 +18,3 @@
 - Add localized theme metadata and setting descriptions for the Discourse admin UI.
 - Document installation, settings, data boundaries, security scope, support, and release checks.
 - Add public issue reporting, security policy, contribution guidance, and MIT license files.
-- Fix random-row activity dates by using Discourse's built-in tiny date formatter.

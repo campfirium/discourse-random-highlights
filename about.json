@@ -4,7 +4,7 @@
   "license_url": "https://github.com/campfirium/discourse-random-highlights/blob/main/LICENSE",
   "about_url": "https://github.com/campfirium/discourse-random-highlights",
   "authors": "Campfirium",
-  "theme_version": "0.7.0",
+  "theme_version": "0.7.1",
   "modifiers": {
     "svg_icons": ["highlighter"]
   }
