@@ -23,7 +23,13 @@
 
 .random-highlight .random-highlight-prefix {
   flex: 0 0 auto;
-  margin-inline-end: -0.14em;
+  align-self: center;
+  width: 0.48em;
+  height: 0.48em;
+  margin-inline: 0.16em 0.36em;
+  border-radius: 24%;
+  background: currentcolor;
+  transform: rotate(45deg);
 }
 
 @media screen and (max-width: 1024px) {
