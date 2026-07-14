@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3 - 2026-07-14
+
+- Replace the platform-dependent sparkle emoji in random highlight source labels with a theme-aware rounded diamond marker.
+
 ## 0.7.2 - 2026-07-09
 
 - Fix random-row reply and view counts so they match Discourse topic-list semantics and formatting.
