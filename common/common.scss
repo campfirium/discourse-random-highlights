@@ -10,6 +10,7 @@
 .random-highlight .random-highlight-source {
   display: flex;
   align-items: baseline;
+  gap: 0.33em;
   margin-top: 0.35em;
   color: inherit;
   font-size: var(--font-down-1);
@@ -22,14 +23,22 @@
 }
 
 .random-highlight .random-highlight-prefix {
+  position: relative;
   flex: 0 0 auto;
-  align-self: center;
-  width: 0.48em;
-  height: 0.48em;
-  margin-inline: 0.16em 0.36em;
-  border-radius: 24%;
+  width: var(--category-badge-size, 0.75em);
+  height: var(--category-badge-size, 0.75em);
+}
+
+.random-highlight .random-highlight-prefix::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70.71%;
+  height: 70.71%;
+  border-radius: var(--category-badge-border-radius, 2px);
   background: currentcolor;
-  transform: rotate(45deg);
+  content: "";
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 @media screen and (max-width: 1024px) {
