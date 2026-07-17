@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Limit the random highlight row to the global Latest topic list.
+
 ## 0.7.3 - 2026-07-14
 
 - Replace the platform-dependent sparkle emoji in random highlight source labels with a theme-aware rounded diamond marker.

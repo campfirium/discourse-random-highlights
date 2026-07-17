@@ -50,7 +50,7 @@ You can enable either mode on its own, or enable both.
 
 ## Behavior
 
-The random row appears above the topic list and links back to the source topic.
+The random row appears above the global Latest topic list and links back to the source topic. It does not appear in category or tag lists, Top, Hot, New, Unread, suggested topics, or other topic-list contexts.
 
 On desktop, it reuses available Discourse topic metadata such as author, reply count, view count, and activity time.
 

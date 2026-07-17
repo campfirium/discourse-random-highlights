@@ -48,6 +48,8 @@ Validate these settings:
 Check desktop and mobile topic lists.
 
 - The random row aligns with native topic-list columns.
+- The random row appears on the global Latest route, including the homepage when Latest is configured as the homepage.
+- The random row does not appear on category or tag lists, Top, Hot, New, Unread, or suggested topics below a topic.
 - Mobile view has no broken extra cells, overlap, or unusable tap target.
 - Highlight text respects `max_excerpt_length`.
 - Clicking the title opens the source topic.

@@ -1,3 +1,4 @@
+import { service } from "@ember/service";
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import dFormatDate from "discourse/ui-kit/helpers/d-format-date";
@@ -331,6 +332,8 @@ function refreshPreload() {
 if (sourceConfigs().length) preloadedEntryPromise();
 
 export default class RandomHighlights extends Component {
+  @service router;
+
   @tracked entry = readCachedEntry();
 
   constructor() {
@@ -340,6 +343,12 @@ export default class RandomHighlights extends Component {
 
   get isDesktop() {
     return window.innerWidth > 1024;
+  }
+
+  get displayEntry() {
+    return this.router.currentRouteName === "discovery.latest"
+      ? this.entry
+      : null;
   }
 
   get rowClass() {
@@ -406,7 +415,7 @@ export default class RandomHighlights extends Component {
   }
 
   <template>
-    {{#if this.entry}}
+    {{#if this.displayEntry}}
       <tbody class="random-highlights-body">
         <tr class={{this.rowClass}}>
           <td class="main-link clearfix topic-list-data" colspan="1">
