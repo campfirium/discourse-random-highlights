@@ -390,6 +390,10 @@ export default class RandomHighlights extends Component {
     return this.username ? "/u/" + encodeURIComponent(this.username) : "";
   }
 
+  get mobileMetadataClass() {
+    return this.showAvatar ? "topic-item-metadata right" : "topic-item-metadata";
+  }
+
   get replyCount() {
     return Math.max(0, Number(this.entry?.topic?.posts_count || 0) - 1);
   }
@@ -417,21 +421,20 @@ export default class RandomHighlights extends Component {
   <template>
     {{#if this.displayEntry}}
       <tbody class="random-highlights-body">
-        <tr class={{this.rowClass}}>
-          <td class="main-link clearfix topic-list-data" colspan="1">
-            <span class="link-top-line" role="heading" aria-level="2">
-              <a href={{this.entry.href}} class="title raw-link raw-topic-link">
-                {{this.displayExcerpt}}
-              </a>
-            </span>
-            {{#if this.displayTitle}}
-              <div class="link-bottom-line random-highlight-source">
-                <span class="random-highlight-prefix" aria-hidden="true"></span><a href={{this.entry.href}} class="raw-link">{{this.displayTitle}}</a>
-              </div>
-            {{/if}}
-          </td>
-
+        <tr class={{this.rowClass}} data-topic-id={{this.entry.topic.id}}>
           {{#if this.isDesktop}}
+            <td class="main-link clearfix topic-list-data" colspan="1">
+              <span class="link-top-line" role="heading" aria-level="2">
+                <a href={{this.entry.href}} data-topic-id={{this.entry.topic.id}} class="title raw-link raw-topic-link">
+                  {{this.displayExcerpt}}
+                </a>
+              </span>
+              {{#if this.displayTitle}}
+                <div class="link-bottom-line random-highlight-source">
+                  <span class="random-highlight-prefix" aria-hidden="true"></span><a href={{this.entry.href}} class="raw-link">{{this.displayTitle}}</a>
+                </div>
+              {{/if}}
+            </td>
             <td class="posters topic-list-data theme-avatar-small">
               {{#if this.showAvatar}}
                 <a href={{this.userPath}} data-user-card={{this.username}} class="latest single">
@@ -447,6 +450,49 @@ export default class RandomHighlights extends Component {
               <a href={{this.entry.href}} class="post-activity">
                 {{dFormatDate this.activityDate format="tiny" noTitle="true"}}
               </a>
+            </td>
+          {{else}}
+            <td class="topic-list-data">
+              {{#if this.showAvatar}}
+                <div class="pull-left">
+                  <a href={{this.entry.href}} data-user-card={{this.username}}>
+                    <img alt="" width="48" height="48" src={{this.avatar}} class="avatar" title={{this.username}}>
+                  </a>
+                </div>
+              {{/if}}
+
+              <div class={{this.mobileMetadataClass}}>
+                <div class="main-link" role="heading" aria-level="2">
+                  <a href={{this.entry.href}} data-topic-id={{this.entry.topic.id}} class="title raw-link raw-topic-link">
+                    {{this.displayExcerpt}}
+                  </a>
+                </div>
+
+                <div class="pull-right">
+                  <div class="num posts-map posts topic-list-data">
+                    <a href={{this.entry.href}} class="badge-posts">
+                      <span class="number">{{dNumber this.replyCount noTitle="true"}}</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="topic-item-stats clearfix">
+                  <span class="topic-item-stats__category-tags">
+                    {{#if this.displayTitle}}
+                      <span class="random-highlight-source">
+                        <span class="random-highlight-prefix" aria-hidden="true"></span><a href={{this.entry.href}} class="raw-link">{{this.displayTitle}}</a>
+                      </span>
+                    {{/if}}
+                  </span>
+                  <div class="num activity last">
+                    <span class="age activity">
+                      <a href={{this.entry.href}}>
+                        {{dFormatDate this.activityDate format="tiny" noTitle="true"}}
+                      </a>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </td>
           {{/if}}
         </tr>
