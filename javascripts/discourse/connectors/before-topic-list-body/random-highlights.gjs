@@ -378,6 +378,10 @@ export default class RandomHighlights extends Component {
     return avatarUrl(this.user, 48);
   }
 
+  get mobileAvatar() {
+    return avatarUrl(this.user, 96);
+  }
+
   get showAvatar() {
     return this.showAuthor && this.avatar;
   }
@@ -456,7 +460,7 @@ export default class RandomHighlights extends Component {
               {{#if this.showAvatar}}
                 <div class="pull-left">
                   <a href={{this.entry.href}} data-user-card={{this.username}}>
-                    <img alt="" width="48" height="48" src={{this.avatar}} class="avatar" title={{this.username}}>
+                    <img alt="" width="48" height="48" src={{this.mobileAvatar}} class="avatar" title={{this.username}}>
                   </a>
                 </div>
               {{/if}}
@@ -471,7 +475,7 @@ export default class RandomHighlights extends Component {
                 <div class="pull-right">
                   <div class="num posts-map posts topic-list-data">
                     <a href={{this.entry.href}} class="badge-posts">
-                      <span class="number">{{dNumber this.replyCount noTitle="true"}}</span>
+                      {{dNumber this.replyCount noTitle="true"}}
                     </a>
                   </div>
                 </div>
