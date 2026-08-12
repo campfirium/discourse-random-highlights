@@ -345,6 +345,10 @@ export default class RandomHighlights extends Component {
     return window.innerWidth > 1024;
   }
 
+  get bulkSelectEnabled() {
+    return Boolean(this.args.outletArgs?.bulkSelectEnabled);
+  }
+
   get displayEntry() {
     return this.router.currentRouteName === "discovery.latest"
       ? this.entry
@@ -427,6 +431,9 @@ export default class RandomHighlights extends Component {
       <tbody class="random-highlights-body">
         <tr class={{this.rowClass}} data-topic-id={{this.entry.topic.id}}>
           {{#if this.isDesktop}}
+            {{#if this.bulkSelectEnabled}}
+              <td class="bulk-select topic-list-data"></td>
+            {{/if}}
             <td class="main-link clearfix topic-list-data" colspan="1">
               <span class="link-top-line" role="heading" aria-level="2">
                 <a href={{this.entry.href}} data-topic-id={{this.entry.topic.id}} class="title raw-link raw-topic-link">
