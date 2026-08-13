@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Limit the random highlight row to the global Latest topic list.
+- Support grouped multi-block excerpts with `[wrap=random-highlight]...[/wrap]` while continuing to read legacy standalone `<mark>` excerpts.
 
 ## 0.7.3 - 2026-07-14
 

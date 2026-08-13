@@ -30,8 +30,10 @@ Do not tag a release if the target Discourse version cannot load `.gjs` connecto
 Create public test topics for these cases:
 
 - A short-topic tag with at least two topics.
-- An excerpt-topic tag with a first post containing multiple inline `<mark>` excerpts.
-- An excerpt-topic tag topic without any `<mark>` excerpts.
+- An excerpt-topic tag with a first post containing multiple `[wrap=random-highlight]` excerpts.
+- A grouped excerpt containing a heading, multiple paragraphs, and a list.
+- An excerpt-topic tag with a legacy standalone `<mark>` excerpt.
+- An excerpt-topic tag topic without any marked excerpts.
 - A combined tag used for both short-topic and excerpt modes.
 
 Validate these settings:
@@ -66,10 +68,12 @@ Check with a logged-in test user.
 - Non-matching `composer_allowed_user_ids` hides the button.
 - `composer_min_trust_level` hides the button below the configured trust level.
 - The registered `highlighter` toolbar icon renders on the target Discourse version.
-- Selected inline text becomes `<mark>selected text</mark>`.
+- Selected inline text becomes `[wrap=random-highlight]selected text[/wrap]`.
+- A multi-line selection becomes one block wrap with the opening and closing tags on their own lines.
+- Headings and lists inside a block wrap retain their Markdown structure in preview.
 - Empty selection inserts the localized example text.
-- Repeating the action around an existing mark does not create nested marks.
-- Complex multi-line or cross-structure selections are checked in preview before using them as release examples.
+- Repeating the action around an existing wrap does not create nested wraps.
+- Legacy standalone `<mark>` excerpts still render and enter the random pool.
 
 ## Styling
 

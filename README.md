@@ -18,9 +18,9 @@ Each tagged topic becomes one random item. The row links back to the original to
 
 ### Excerpts From Longer Topics
 
-Use a tag to mark longer source topics, then wrap reusable excerpts in `<mark>...</mark>`.
+Use a tag to mark longer source topics, then wrap reusable excerpts in `[wrap=random-highlight]...[/wrap]`.
 
-Each marked excerpt becomes a separate random item. This is useful when a long guide, changelog, essay, or reference topic contains multiple reusable snippets that deserve to be surfaced independently.
+Each wrap block becomes a separate random item. A block can contain inline text, headings, lists, or multiple paragraphs. Legacy standalone `<mark>...</mark>` excerpts remain readable, but new highlights use the wrap syntax.
 
 If both modes use the same tag, marked excerpts are preferred. Unmarked topics can still fall back to first-post text. The component does not ship with site-specific default tags.
 
@@ -43,7 +43,7 @@ For excerpt mode:
 
 1. Choose any tag name you want for source topics, for example `highlight-source`.
 2. Add that tag to topics that contain reusable excerpts.
-3. Wrap each excerpt in `<mark>...</mark>`.
+3. Wrap each excerpt in `[wrap=random-highlight]...[/wrap]`.
 4. Set `excerpt_topic_tag` to that tag.
 
 You can enable either mode on its own, or enable both.
@@ -58,7 +58,7 @@ The browser caches the tagged topic list and the last resolved random item for `
 
 ## Composer Button
 
-When `show_composer_button` is enabled, the composer toolbar includes a highlighter button that wraps the selected inline text in `<mark>...</mark>`.
+When `show_composer_button` is enabled, the composer toolbar includes a highlighter button that wraps the selection in `[wrap=random-highlight]...[/wrap]`. A multi-line selection is stored as one block, so headings, lists, and paragraphs remain one random item.
 
 `composer_allowed_user_ids` and `composer_min_trust_level` only control whether the button is shown in the UI. They are not access-control or security boundaries.
 
@@ -75,7 +75,7 @@ Leave a color setting at its default value to use the shipped style. To return a
 
 - `short_topic_tag`: tag for short topics. Leave empty to disable this source mode.
 - `excerpt_topic_tag`: tag for source topics containing marked excerpts. Leave empty to disable this source mode.
-- `highlight_selector`: CSS selector used to find excerpts in cooked post HTML. Defaults to `mark`.
+- `highlight_selector`: additional CSS selector used to find legacy or custom excerpts in cooked post HTML. Defaults to `mark`; `[wrap=random-highlight]` blocks are always included.
 - `max_excerpt_length`: maximum displayed highlight length.
 - `topic_cache_minutes`: browser cache duration for tagged topic lists and the last resolved random item. Defaults to 7 days.
 - `show_composer_button`: shows or hides the composer toolbar button.

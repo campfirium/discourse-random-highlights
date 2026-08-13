@@ -6,7 +6,7 @@ excerpt_topic_tag:
   description: "Tag for long topics. Marked excerpts in the first post are used as random highlights. Leave empty to disable excerpt sources."
 highlight_selector:
   default: mark
-  description: "CSS selector used to extract marked excerpts from the first post cooked HTML."
+  description: "Additional CSS selector used to extract legacy or custom excerpts. Random Highlight wrap blocks are always included."
 max_excerpt_length:
   default: 220
   min: 40
@@ -19,7 +19,7 @@ topic_cache_minutes:
   description: "How long to cache the tagged topic lists in the browser."
 show_composer_button:
   default: true
-  description: "Add a composer toolbar button that marks selected text as a highlight."
+  description: "Add a composer toolbar button that wraps selected text or blocks as one random highlight."
 composer_allowed_user_ids:
   default: ""
   description: "Optional comma-separated user IDs that can see the composer button. Empty means everyone. This is UI filtering, not security."

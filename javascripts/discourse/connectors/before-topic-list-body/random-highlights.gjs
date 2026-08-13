@@ -6,13 +6,21 @@ import dNumber from "discourse/ui-kit/helpers/d-number";
 
 const SHORT_TOPIC_TAG = String(settings.short_topic_tag || "").trim();
 const EXCERPT_TOPIC_TAG = String(settings.excerpt_topic_tag || "").trim();
+const LEGACY_HIGHLIGHT_SELECTOR = "mark";
 const HIGHLIGHT_SELECTOR = String(settings.highlight_selector || "mark").trim() || "mark";
+const HIGHLIGHT_WRAP_SELECTOR = '[data-wrap="random-highlight"]';
+const HIGHLIGHT_TEXT_BOUNDARY_TAGS = new Set([
+  "ADDRESS", "ARTICLE", "ASIDE", "BLOCKQUOTE", "BR", "DD", "DIV", "DL", "DT",
+  "FIGCAPTION", "FIGURE", "FOOTER", "H1", "H2", "H3", "H4", "H5", "H6",
+  "HEADER", "HR", "LI", "MAIN", "NAV", "OL", "P", "PRE", "SECTION", "TABLE",
+  "TBODY", "TD", "TFOOT", "TH", "THEAD", "TR", "UL"
+]);
 const MAX_EXCERPT_LENGTH = numberSetting(settings.max_excerpt_length, 220, 40, 1000);
 const CACHE_MS = numberSetting(settings.topic_cache_minutes, 10080, 1, 10080) * 60 * 1000;
 const AUTHOR_MIN_TRUST_LEVEL = numberSetting(settings.allowed_author_min_trust_level, 0, 0, 4);
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
-const ENTRY_CACHE_KEY = "randomHighlightsEntryCacheV1:" + SOURCE_SIGNATURE;
+const ENTRY_CACHE_KEY = "randomHighlightsEntryCacheV2:" + SOURCE_SIGNATURE;
 const RANDOM_ITEM_AUTHOR_MODE = String(settings.random_item_author_mode || "original_author").trim();
 const SHOW_ORIGINAL_AUTHOR = RANDOM_ITEM_AUTHOR_MODE !== "system";
 let PRELOADED_ENTRY_PROMISE = null;
@@ -105,14 +113,46 @@ function htmlToText(html) {
 }
 
 function queryHighlightNodes(root) {
+  const groupedNodes = Array.from(root.querySelectorAll(HIGHLIGHT_WRAP_SELECTOR));
+  const legacyNodes = Array.from(root.querySelectorAll(LEGACY_HIGHLIGHT_SELECTOR));
+  let selectedNodes = [];
+
   try {
-    return Array.from(root.querySelectorAll(HIGHLIGHT_SELECTOR));
+    selectedNodes = Array.from(root.querySelectorAll(HIGHLIGHT_SELECTOR));
   } catch (error) {
     // Invalid admin-provided selectors should not break the topic list.
     // eslint-disable-next-line no-console
     console.warn("random highlights selector failed", error);
-    return [];
   }
+
+  const candidates = new Set([...groupedNodes, ...legacyNodes, ...selectedNodes]);
+  return Array.from(root.querySelectorAll("*")).filter((node) => {
+    if (!candidates.has(node)) return false;
+
+    if (node.matches(HIGHLIGHT_WRAP_SELECTOR)) {
+      return !node.parentElement?.closest(HIGHLIGHT_WRAP_SELECTOR);
+    }
+    return !node.closest(HIGHLIGHT_WRAP_SELECTOR);
+  });
+}
+
+function highlightNodeText(node) {
+  const parts = [];
+
+  function appendNodeText(current) {
+    if (current.nodeType === 3) {
+      parts.push(current.textContent || "");
+      return;
+    }
+
+    const separatesText = current !== node && HIGHLIGHT_TEXT_BOUNDARY_TAGS.has(current.tagName);
+    if (separatesText) parts.push(" ");
+    current.childNodes.forEach(appendNodeText);
+    if (separatesText) parts.push(" ");
+  }
+
+  appendNodeText(node);
+  return parts.join("");
 }
 
 function firstPost(payload) {
@@ -268,7 +308,7 @@ function extractHighlights(topic, post) {
 
   const mode = topic._randomHighlightsMode || "excerpt";
   const entries = queryHighlightNodes(root)
-    .map((node, index) => entryFromTopic(topic, "highlight:" + topic.id + ":" + index, node.textContent || ""))
+    .map((node, index) => entryFromTopic(topic, "highlight:" + topic.id + ":" + index, highlightNodeText(node)))
     .filter((entry) => entry.text);
 
   if (entries.length) return entries;
