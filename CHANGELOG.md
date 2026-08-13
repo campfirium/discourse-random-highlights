@@ -4,6 +4,7 @@
 
 - Limit the random highlight row to the global Latest topic list.
 - Support grouped multi-block excerpts with `[wrap=random-highlight]...[/wrap]` while continuing to read legacy standalone `<mark>` excerpts.
+- Fall back to the shipped mark colors when a light or dark highlight style setting is empty.
 
 ## 0.7.3 - 2026-07-14
 
