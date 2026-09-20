@@ -59,6 +59,17 @@ Check desktop and mobile topic lists.
 - `system` mode hides author avatar and user-card presentation while preserving row alignment.
 - Post count, views, and activity time come from Discourse topic data.
 
+## Cache, Permissions, and Request Budget
+
+- Seed an old `randomHighlightsEntryCacheV2:` localStorage entry; mounting removes it without displaying its content.
+- Switch from a user with access to a private source to one without access; the private excerpt never appears.
+- Revoke source access or delete the source, then re-enter Latest; a 403/404 never restores the old excerpt.
+- Edit or redact source text, then re-enter Latest; only the updated content can appear.
+- Open other list routes; no highlight requests start. Leave Latest during a pending load; its result is ignored.
+- Verify each load makes at most five topic requests and aborts pending fetches at ten seconds.
+- Return a temporary tag error; re-enter Latest after recovery and verify the source is retried.
+- Destroy the component during a pending load; no state update or retained route listener remains.
+
 ## Composer
 
 Check with a logged-in test user.

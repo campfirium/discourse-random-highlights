@@ -54,7 +54,9 @@ The random row appears above the global Latest topic list and links back to the 
 
 On desktop, it reuses available Discourse topic metadata such as author, reply count, view count, and activity time.
 
-The browser caches the tagged topic list and the last resolved random item for `topic_cache_minutes`, which defaults to 7 days. Repeat visits can render immediately while the next random item refreshes in the background. Session storage is used only to avoid immediate repeats from the same topic during the current browsing session.
+The browser caches successful tagged topic lists in memory for `topic_cache_minutes`, which defaults to 7 days, separately for each visitor identity. Excerpt text is not persisted. Each entry into Latest fetches source content again before displaying it; inaccessible sources are skipped. Old persistent excerpt caches are removed when the component mounts. Session storage contains only topic rotation keys, separated by visitor identity.
+
+Loading runs only on Latest, shares concurrent requests, and tries at most five candidate topics within a ten-second total time budget. If no candidate succeeds, no random row is shown; a later visit continues the queue. Failed tag requests are not cached and can be retried on the next visit.
 
 ## Composer Button
 
@@ -77,7 +79,7 @@ Leave a color setting at its default value to use the shipped style. To return a
 - `excerpt_topic_tag`: tag for source topics containing marked excerpts. Leave empty to disable this source mode.
 - `highlight_selector`: additional CSS selector used to find legacy or custom excerpts in cooked post HTML. Defaults to `mark`; `[wrap=random-highlight]` blocks are always included.
 - `max_excerpt_length`: maximum displayed highlight length.
-- `topic_cache_minutes`: browser cache duration for tagged topic lists and the last resolved random item. Defaults to 7 days.
+- `topic_cache_minutes`: in-memory cache duration for successful tagged topic lists. Defaults to 7 days.
 - `show_composer_button`: shows or hides the composer toolbar button.
 - `composer_allowed_user_ids`: optional comma-separated UI allowlist for the composer button.
 - `composer_min_trust_level`: optional minimum trust level for the composer button.
@@ -95,7 +97,7 @@ Validate install, Git update, topic-list rendering, composer behavior, and styli
 
 ## Data and Security
 
-The component reads Discourse JSON endpoints that the current visitor can already access. It does not add server-side permissions, expose private topics, migrate content, or write database records.
+The component reads Discourse JSON endpoints that the current visitor can already access. It does not add server-side permissions, migrate content, or write database records. Source content is fetched under the current visitor’s permissions before display and is not stored in persistent browser storage.
 
 Marked excerpts are rendered as escaped text. Source post HTML is parsed only to find matching excerpt elements and extract text.
 

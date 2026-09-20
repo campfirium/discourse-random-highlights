@@ -20,10 +20,12 @@ const CACHE_MS = numberSetting(settings.topic_cache_minutes, 10080, 1, 10080) * 
 const AUTHOR_MIN_TRUST_LEVEL = numberSetting(settings.allowed_author_min_trust_level, 0, 0, 4);
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
-const ENTRY_CACHE_KEY = "randomHighlightsEntryCacheV2:" + SOURCE_SIGNATURE;
 const RANDOM_ITEM_AUTHOR_MODE = String(settings.random_item_author_mode || "original_author").trim();
 const SHOW_ORIGINAL_AUTHOR = RANDOM_ITEM_AUTHOR_MODE !== "system";
-let PRELOADED_ENTRY_PROMISE = null;
+const MAX_TOPIC_REQUESTS = 5;
+const LOAD_TIMEOUT_MS = 10000;
+const IN_FLIGHT = new Map();
+const TOPIC_CACHES = new Map();
 
 function numberSetting(value, fallback, min, max) {
   const number = Number(value);
@@ -75,18 +77,13 @@ function topicUrl(topic) {
   return "/t/" + encodeURIComponent(topic.slug || "topic") + "/" + topic.id;
 }
 
-function readJSON(key) {
+function clearLegacyEntryCaches() {
   try {
-    const value = window.localStorage && window.localStorage.getItem(key);
-    return value ? JSON.parse(value) : null;
-  } catch (_error) {
-    return null;
-  }
-}
-
-function writeJSON(key, value) {
-  try {
-    if (window.localStorage) window.localStorage.setItem(key, JSON.stringify(value));
+    const storage = window.localStorage;
+    for (let index = storage.length - 1; index >= 0; index -= 1) {
+      const key = storage.key(index);
+      if (key?.startsWith("randomHighlightsEntryCacheV2:")) storage.removeItem(key);
+    }
   } catch (_error) {}
 }
 
@@ -194,32 +191,14 @@ function originalPoster(topic) {
   return posters.find((poster) => String(poster.extras || "").includes("original")) || posters[0];
 }
 
-function getCachedTopics() {
-  const cache = window._randomHighlightsTopicCache;
-  if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !Array.isArray(cache.topics)) return null;
-  if (Date.now() - cache.fetchedAt > CACHE_MS) return null;
+function getCachedTopics(identity) {
+  const cache = TOPIC_CACHES.get(identity);
+  if (!cache || Date.now() - cache.fetchedAt > CACHE_MS) return null;
   return cache.topics;
 }
 
-function setCachedTopics(topics) {
-  window._randomHighlightsTopicCache = { signature: SOURCE_SIGNATURE, fetchedAt: Date.now(), topics };
-}
-
-function cacheableEntry(entry) {
-  if (!entry) return null;
-  return { signature: SOURCE_SIGNATURE, fetchedAt: Date.now(), entry };
-}
-
-function readCachedEntry() {
-  const cache = readJSON(ENTRY_CACHE_KEY);
-  if (!cache || cache.signature !== SOURCE_SIGNATURE || !cache.fetchedAt || !cache.entry) return null;
-  if (Date.now() - cache.fetchedAt > CACHE_MS) return null;
-  return cache.entry;
-}
-
-function writeCachedEntry(entry) {
-  const cache = cacheableEntry(entry);
-  if (cache) writeJSON(ENTRY_CACHE_KEY, cache);
+function setCachedTopics(identity, topics) {
+  TOPIC_CACHES.set(identity, { fetchedAt: Date.now(), topics });
 }
 
 function applyTopicMetadata(topic, payload) {
@@ -239,17 +218,22 @@ function applyTopicMetadata(topic, payload) {
   return topic;
 }
 
-async function fetchTaggedTopics() {
-  const cached = getCachedTopics();
+async function fetchTaggedTopics(identity, signal) {
+  const cached = getCachedTopics(identity);
   if (cached) return cached;
 
   const configs = sourceConfigs();
   const topics = [];
+  let failed = false;
 
   for (const config of configs) {
+    if (signal.aborted) throw new Error("highlight load timed out");
     try {
-      const response = await fetch("/tag/" + encodeURIComponent(config.tag) + ".json", { credentials: "same-origin" });
-      if (!response.ok) continue;
+      const response = await fetch("/tag/" + encodeURIComponent(config.tag) + ".json", { credentials: "same-origin", cache: "no-store", signal });
+      if (!response.ok) {
+        failed = true;
+        continue;
+      }
 
       const payload = await response.json();
       const usersById = {};
@@ -267,18 +251,19 @@ async function fetchTaggedTopics() {
           }));
         });
     } catch (error) {
+      failed = true;
       // One unavailable tag source should not block the other configured source.
       // eslint-disable-next-line no-console
       console.warn("random highlights tag failed", error);
     }
   }
 
-  setCachedTopics(topics);
+  if (!failed) setCachedTopics(identity, topics);
   return topics;
 }
 
-async function fetchEntriesForTopic(topic) {
-  const response = await fetch(topicUrl(topic) + ".json", { credentials: "same-origin" });
+async function fetchEntriesForTopic(topic, signal) {
+  const response = await fetch(topicUrl(topic) + ".json", { credentials: "same-origin", cache: "no-store", signal });
   if (!response.ok) throw new Error("topic request failed: " + response.status);
 
   const payload = await response.json();
@@ -287,19 +272,6 @@ async function fetchEntriesForTopic(topic) {
   rememberPostUser(topic, post);
   if (!post || !authorAllowed(topic, post)) return [];
   return extractHighlights(topic, post);
-}
-
-async function refreshEntryMetadata(entry) {
-  if (!entry || !entry.href || !entry.topic) return entry;
-
-  const response = await fetch(entry.href + ".json", { credentials: "same-origin" });
-  if (!response.ok) return entry;
-
-  const payload = await response.json();
-  const topic = Object.assign({}, applyTopicMetadata(Object.assign({}, entry.topic), payload));
-  const refreshedEntry = Object.assign({}, entry, { topic });
-  writeCachedEntry(refreshedEntry);
-  return refreshedEntry;
 }
 
 function extractHighlights(topic, post) {
@@ -314,7 +286,7 @@ function extractHighlights(topic, post) {
   if (entries.length) return entries;
   if (mode === "excerpt") return [];
 
-  const fallback = truncateText(htmlToText(post.cooked || topic.excerpt || ""), MAX_EXCERPT_LENGTH);
+  const fallback = truncateText(htmlToText(post.cooked || ""), MAX_EXCERPT_LENGTH);
   return fallback ? [entryFromTopic(topic, "topic:" + topic.id, fallback)] : [];
 }
 
@@ -328,26 +300,31 @@ function entryFromTopic(topic, id, text) {
   };
 }
 
-async function fetchNextHighlight() {
-  const topics = await fetchTaggedTopics();
-  const storedQueue = readSessionJSON(QUEUE_KEY);
+async function fetchNextHighlight(identity, signal) {
+  const topics = await fetchTaggedTopics(identity, signal);
+  const queueKey = QUEUE_KEY + ":" + identity;
+  const storedQueue = readSessionJSON(queueKey);
   let queue = (Array.isArray(storedQueue) ? storedQueue : []).filter((key) =>
     topics.some((topic) => randomKey(topic) === key)
   );
   if (!queue.length) queue = shuffle(topics.map((topic) => randomKey(topic)).filter(Boolean));
 
-  while (queue.length) {
+  let requests = 0;
+  while (queue.length && requests < MAX_TOPIC_REQUESTS && !signal.aborted) {
     const key = queue.shift();
-    writeSessionJSON(QUEUE_KEY, queue);
+    writeSessionJSON(queueKey, queue);
 
     const topic = topics.find((item) => randomKey(item) === key);
     if (!topic) continue;
+    const allowedIds = parseIdList(settings.allowed_author_user_ids);
+    const poster = originalPoster(topic);
+    if (allowedIds.length && poster && !allowedIds.includes(Number(poster.user_id))) continue;
 
     try {
-      const entries = await fetchEntriesForTopic(topic);
+      requests += 1;
+      const entries = await fetchEntriesForTopic(topic, signal);
       const entry = shuffle(entries)[0];
       if (entry) {
-        writeCachedEntry(entry);
         return entry;
       }
     } catch (error) {
@@ -360,25 +337,38 @@ async function fetchNextHighlight() {
   return null;
 }
 
-function preloadedEntryPromise() {
-  if (!PRELOADED_ENTRY_PROMISE) PRELOADED_ENTRY_PROMISE = fetchNextHighlight();
-  return PRELOADED_ENTRY_PROMISE;
+function loadEntry(identity) {
+  if (IN_FLIGHT.has(identity)) return IN_FLIGHT.get(identity);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), LOAD_TIMEOUT_MS);
+  const promise = fetchNextHighlight(identity, controller.signal).finally(() => {
+    clearTimeout(timeout);
+    IN_FLIGHT.delete(identity);
+  });
+  IN_FLIGHT.set(identity, promise);
+  return promise;
 }
-
-function refreshPreload() {
-  PRELOADED_ENTRY_PROMISE = fetchNextHighlight();
-}
-
-if (sourceConfigs().length) preloadedEntryPromise();
 
 export default class RandomHighlights extends Component {
   @service router;
+  @service currentUser;
 
-  @tracked entry = readCachedEntry();
+  @tracked entry = null;
+  loadGeneration = 0;
+  latestActive = false;
 
   constructor() {
     super(...arguments);
+    clearLegacyEntryCaches();
+    this.handleRouteChange = () => this.load();
+    this.router.on("routeDidChange", this.handleRouteChange);
     this.load();
+  }
+
+  willDestroy() {
+    this.router.off("routeDidChange", this.handleRouteChange);
+    this.loadGeneration += 1;
+    super.willDestroy(...arguments);
   }
 
   get isDesktop() {
@@ -452,15 +442,25 @@ export default class RandomHighlights extends Component {
   }
 
   async load() {
+    if (this.router.currentRouteName !== "discovery.latest") {
+      this.latestActive = false;
+      this.loadGeneration += 1;
+      this.entry = null;
+      return;
+    }
+    if (this.latestActive) return;
+    this.latestActive = true;
+    const generation = ++this.loadGeneration;
+    const identity = String(this.currentUser?.id ?? "anonymous");
+    this.entry = null;
     try {
-      if (this.entry) {
-        this.entry = await refreshEntryMetadata(this.entry);
-      } else {
-        this.entry = await preloadedEntryPromise();
-        refreshPreload();
+      const entry = await loadEntry(identity);
+      if (!this.isDestroying && !this.isDestroyed && generation === this.loadGeneration &&
+          identity === String(this.currentUser?.id ?? "anonymous")) {
+        this.entry = entry;
       }
     } catch (error) {
-      // Keep the topic list usable if the source tag is missing or private.
+      // A failed request must never restore previously visible content.
       // eslint-disable-next-line no-console
       console.warn("random highlights failed", error);
     }

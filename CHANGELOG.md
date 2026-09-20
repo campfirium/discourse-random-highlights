@@ -2,7 +2,15 @@
 
 ## Unreleased
 
+## 0.7.4 - 2026-09-20
+
+- Stop persisting excerpt content, remove legacy excerpt caches, and fetch current source content before display.
+- Isolate topic caches and rotation queues by visitor identity; do not cache failed tag requests.
+- Load only on Latest, share concurrent requests, and cap each load at five topic requests and ten seconds.
+- Ignore results after route changes or component destruction.
+
 - Limit the random highlight row to the global Latest topic list.
+- Match native mobile topic-row layout and keep desktop columns aligned during bulk selection.
 - Support grouped multi-block excerpts with `[wrap=random-highlight]...[/wrap]` while continuing to read legacy standalone `<mark>` excerpts.
 - Fall back to the shipped mark colors when a light or dark highlight style setting is empty.
 
