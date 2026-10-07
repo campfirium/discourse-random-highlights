@@ -54,7 +54,7 @@ The random row appears above the global Latest topic list and links back to the 
 
 On desktop, it reuses available Discourse topic metadata such as author, reply count, view count, and activity time.
 
-The browser caches successful tagged topic lists in memory for `topic_cache_minutes`, which defaults to 7 days, separately for each visitor identity. Excerpt text is not persisted. Each entry into Latest fetches source content again before displaying it; inaccessible sources are skipped. Old persistent excerpt caches are removed when the component mounts. Session storage contains only topic rotation keys, separated by visitor identity.
+The browser caches successful tagged topic lists in memory for `topic_cache_minutes`, which defaults to 7 days, separately for each visitor identity. A prepared highlight is cached in session storage per visitor and source/filter configuration for the same duration. The first visit loads it from the source; later visits and reloads in the same tab display the cached row immediately alongside the normal topic list. A background request prepares the next highlight without replacing the visible row. Inaccessible sources are skipped, and a failed or empty background result clears the prepared entry for the next visit. Background checks affect the next visit; the current row stays visible. Old persistent excerpt caches are removed when the component mounts. Session storage contains the prepared highlight and topic rotation keys, separated by visitor identity. Closing the tab ends the session cache.
 
 Loading runs only on Latest, shares concurrent requests, and tries at most five candidate topics within a ten-second total time budget. If no candidate succeeds, no random row is shown; a later visit continues the queue. Failed tag requests are not cached and can be retried on the next visit.
 
@@ -97,7 +97,7 @@ Validate install, Git update, topic-list rendering, composer behavior, and styli
 
 ## Data and Security
 
-The component reads Discourse JSON endpoints that the current visitor can already access. It does not add server-side permissions, migrate content, or write database records. Source content is fetched under the current visitor’s permissions before display and is not stored in persistent browser storage.
+The component reads Discourse JSON endpoints that the current visitor can already access. It does not add server-side permissions, migrate content, or write database records. Source content is fetched under the current visitor’s permissions when preparing a highlight. Later displays can use that visitor’s session cache; permission or content changes are reflected by background preparation or cache expiry. Excerpt text is not stored in local storage.
 
 Marked excerpts are rendered as escaped text. Source post HTML is parsed only to find matching excerpt elements and extract text.
 

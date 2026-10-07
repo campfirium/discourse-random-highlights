@@ -20,6 +20,10 @@ const CACHE_MS = numberSetting(settings.topic_cache_minutes, 10080, 1, 10080) * 
 const AUTHOR_MIN_TRUST_LEVEL = numberSetting(settings.allowed_author_min_trust_level, 0, 0, 4);
 const SOURCE_SIGNATURE = [SHORT_TOPIC_TAG, EXCERPT_TOPIC_TAG].join("|");
 const QUEUE_KEY = "randomHighlightsDisplayQueueV2:" + SOURCE_SIGNATURE;
+const ENTRY_CACHE_KEY = "randomHighlightsEntryCacheV3:" + JSON.stringify([
+  SOURCE_SIGNATURE, HIGHLIGHT_SELECTOR, MAX_EXCERPT_LENGTH,
+  String(settings.allowed_author_user_ids || ""), AUTHOR_MIN_TRUST_LEVEL
+]);
 const RANDOM_ITEM_AUTHOR_MODE = String(settings.random_item_author_mode || "original_author").trim();
 const SHOW_ORIGINAL_AUTHOR = RANDOM_ITEM_AUTHOR_MODE !== "system";
 const MAX_TOPIC_REQUESTS = 5;
@@ -100,6 +104,24 @@ function writeSessionJSON(key, value) {
   try {
     if (window.sessionStorage) window.sessionStorage.setItem(key, JSON.stringify(value));
   } catch (_error) {}
+}
+
+function readCachedEntry(identity) {
+  const cache = readSessionJSON(ENTRY_CACHE_KEY + ":" + identity);
+  if (!cache?.entry?.topic?.id || !cache.entry.text || !cache.fetchedAt) return null;
+  if (Date.now() - cache.fetchedAt > CACHE_MS) return null;
+  return cache.entry;
+}
+
+function writeCachedEntry(identity, entry) {
+  const key = ENTRY_CACHE_KEY + ":" + identity;
+  if (entry) {
+    writeSessionJSON(key, { fetchedAt: Date.now(), entry });
+  } else {
+    try {
+      window.sessionStorage?.removeItem(key);
+    } catch (_error) {}
+  }
 }
 
 function htmlToText(html) {
@@ -452,12 +474,14 @@ export default class RandomHighlights extends Component {
     this.latestActive = true;
     const generation = ++this.loadGeneration;
     const identity = String(this.currentUser?.id ?? "anonymous");
-    this.entry = null;
+    const cachedEntry = readCachedEntry(identity);
+    this.entry = cachedEntry;
     try {
       const entry = await loadEntry(identity);
       if (!this.isDestroying && !this.isDestroyed && generation === this.loadGeneration &&
           identity === String(this.currentUser?.id ?? "anonymous")) {
-        this.entry = entry;
+        writeCachedEntry(identity, entry);
+        if (!cachedEntry) this.entry = entry;
       }
     } catch (error) {
       // A failed request must never restore previously visible content.
