@@ -107,7 +107,12 @@ function writeSessionJSON(key, value) {
 }
 
 function readCachedEntry(identity) {
-  const cache = readSessionJSON(ENTRY_CACHE_KEY + ":" + identity);
+  let cache;
+  try {
+    cache = JSON.parse(window.localStorage?.getItem(ENTRY_CACHE_KEY + ":" + identity) || "null");
+  } catch (_error) {
+    return null;
+  }
   if (!cache?.entry?.topic?.id || !cache.entry.text || !cache.fetchedAt) return null;
   if (Date.now() - cache.fetchedAt > CACHE_MS) return null;
   return cache.entry;
@@ -115,13 +120,13 @@ function readCachedEntry(identity) {
 
 function writeCachedEntry(identity, entry) {
   const key = ENTRY_CACHE_KEY + ":" + identity;
-  if (entry) {
-    writeSessionJSON(key, { fetchedAt: Date.now(), entry });
-  } else {
-    try {
-      window.sessionStorage?.removeItem(key);
-    } catch (_error) {}
-  }
+  try {
+    if (entry) {
+      window.localStorage?.setItem(key, JSON.stringify({ fetchedAt: Date.now(), entry }));
+    } else {
+      window.localStorage?.removeItem(key);
+    }
+  } catch (_error) {}
 }
 
 function htmlToText(html) {
